@@ -84,7 +84,6 @@
     .btn-join:hover{background:rgba(255,255,255,.18);}
     .b10{padding:1.4rem;justify-content:center;gap:6px;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 100%);position:relative;overflow:hidden;}
     .b10-bg{position:absolute;right:1.2rem;top:50%;transform:translateY(-50%);font-family:'Space Grotesk',sans-serif;font-size:3.5rem;font-weight:900;color:rgba(255,255,255,.07);pointer-events:none;line-height:1;letter-spacing:-3px;}
-    .b10-link{position:absolute;inset:0;z-index:1;}
     .b11{padding:.9rem;justify-content:flex-start;gap:8px;background:linear-gradient(160deg,#111827,#1a1040);}
     .radio-icons{display:flex;gap:6px;margin-top:4px;}
     .radio-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:rgba(91,94,244,.14);border:1px solid rgba(91,94,244,.18);font-size:13px;}
@@ -120,43 +119,17 @@
     <div class="id-tags" id="id-tags"></div>
     <div class="id-barcode" id="barcode"></div>
   </div>
-  <div class="block b2" id="b2">
-    <div class="block-label">Mes projets "tech"</div>
-    <div class="thumbs"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div>
-  </div>
-  <div class="block b3" id="b3">
-    <div class="block-label">Mes projets "créa"</div>
-    <div class="thumbs"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div>
-  </div>
-  <div class="block b4" id="b4">
-    <div class="phone">
-      <div class="ph-bar"></div>
-      <div class="ph-row"><div class="ph-av"></div><div class="ph-lines"><div class="ph-line"></div><div class="ph-line s"></div></div></div>
-      <div class="ph-stats">
-        <div><div class="ph-stat-n">0</div><div class="ph-stat-l">posts</div></div>
-        <div><div class="ph-stat-n">0</div><div class="ph-stat-l">abonnés</div></div>
-        <div><div class="ph-stat-n">0</div><div class="ph-stat-l">suivis</div></div>
-      </div>
-      <div class="ph-line" style="margin-top:4px;"></div><div class="ph-line s" style="margin-top:3px;"></div>
-    </div>
-  </div>
-  <div class="block b5" id="b5">
-    <div class="block-label">Retrouve-moi sur</div>
-    <div class="block-title">@nathabu</div>
-    <div class="net-card"><div class="net-top"><div class="net-av"></div><div><div class="net-name">Nathanaël</div><div class="net-handle">@nathabu</div></div></div><div class="net-line"></div><div class="net-line w70"></div></div>
-  </div>
-  <div class="block b6" id="b6">
-    <div class="pattern-txt">NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH</div>
-  </div>
+  <div class="block b2" id="b2"><div class="block-label">Mes projets "tech"</div><div class="thumbs"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div></div>
+  <div class="block b3" id="b3"><div class="block-label">Mes projets "créa"</div><div class="thumbs"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div></div>
+  <div class="block b4" id="b4"><div class="phone"><div class="ph-bar"></div><div class="ph-row"><div class="ph-av"></div><div class="ph-lines"><div class="ph-line"></div><div class="ph-line s"></div></div></div><div class="ph-stats"><div><div class="ph-stat-n">0</div><div class="ph-stat-l">posts</div></div><div><div class="ph-stat-n">0</div><div class="ph-stat-l">abonnés</div></div><div><div class="ph-stat-n">0</div><div class="ph-stat-l">suivis</div></div></div><div class="ph-line" style="margin-top:4px;"></div><div class="ph-line s" style="margin-top:3px;"></div></div></div>
+  <div class="block b5" id="b5"><div class="block-label">Retrouve-moi sur</div><div class="block-title">@nathabu</div><div class="net-card"><div class="net-top"><div class="net-av"></div><div><div class="net-name">Nathanaël</div><div class="net-handle">@nathabu</div></div></div><div class="net-line"></div><div class="net-line w70"></div></div></div>
+  <div class="block b6" id="b6"><div class="pattern-txt">NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH</div></div>
   <div class="block b7">
     <div class="team-head">L'équipe</div>
     <div class="members" id="team-members"></div>
-    <button class="btn-team" id="btn-recrutement">Rejoindre l'équipe</button>
+    <button class="btn-team" id="btn-recrutement" style="display:none;">Rejoindre l'équipe</button>
   </div>
-  <div class="block b8" id="b8">
-    <div class="coin coin-a">N</div>
-    <div class="coin coin-b">?</div>
-  </div>
+  <div class="block b8" id="b8"><div class="coin coin-a">N</div><div class="coin coin-b">?</div></div>
   <a class="block b9" id="b9" href="#">
     <div class="tag-row" id="discord-tags"></div>
     <div class="block-title" id="discord-titre">Rejoins la commu sur Discord !</div>
@@ -168,15 +141,7 @@
     <div class="block-sub" id="b10-soustitre"></div>
     <div class="b10-bg">NB</div>
   </div>
-  <div class="block b11" id="b11">
-    <div class="block-label">Webradio</div>
-    <div class="block-title">Les Martinets</div>
-    <div class="radio-icons">
-      <div class="radio-icon"><i class="fas fa-radio" style="color:#818cf8;"></i></div>
-      <div class="radio-icon"><i class="fas fa-microphone" style="color:#a855f7;"></i></div>
-      <div class="radio-icon"><i class="fas fa-music" style="color:#06b6d4;"></i></div>
-    </div>
-  </div>
+  <div class="block b11" id="b11"><div class="block-label">Webradio</div><div class="block-title">Les Martinets</div><div class="radio-icons"><div class="radio-icon"><i class="fas fa-radio" style="color:#818cf8;"></i></div><div class="radio-icon"><i class="fas fa-microphone" style="color:#a855f7;"></i></div><div class="radio-icon"><i class="fas fa-music" style="color:#06b6d4;"></i></div></div></div>
 </div>
 </main>
 
@@ -186,12 +151,13 @@
 </footer>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_hDRMzdkQfxzeNR_okZIof_SzBlbgW-GSHJXmvbQWgwNKIlHLFrcotQsDtTcABMOp/exec';
+// ── CONFIG ──
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbygrkJx5gnFbfPJ2Ef-yWAOvqXCS2GihZL2lgpXoibWDcMJDRJwoIxiMEw_4JDzG5qE/exec';
 
 // ── BARCODE ──
 (function(){
   const bc=document.getElementById('barcode');
-  [22,12,28,16,24,10,26,18,14,30,20,16,26,12,22,18,28,14,24,16].forEach(h=>{
+  [22,12,28,16,24,10,26,18,14,30,20,16,26,12,22,18,28,14,24,16].forEach(function(h){
     const b=document.createElement('div');
     b.className='bar';
     b.style.cssText='width:2px;height:'+h+'px;border-radius:1px;';
@@ -200,88 +166,83 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_hDRMzdkQfxzeNR_ok
 })();
 
 // ── GLOW ──
-document.querySelectorAll('.block').forEach(card=>{
-  card.addEventListener('mousemove',e=>{
+document.querySelectorAll('.block').forEach(function(card){
+  card.addEventListener('mousemove',function(e){
     const r=card.getBoundingClientRect();
     card.style.backgroundImage='radial-gradient(180px circle at '+(e.clientX-r.left)+'px '+(e.clientY-r.top)+'px,rgba(91,94,244,.07),transparent 70%)';
   });
-  card.addEventListener('mouseleave',()=>card.style.backgroundImage='');
+  card.addEventListener('mouseleave',function(){card.style.backgroundImage='';});
 });
 
-// ── LOAD DATA ──
-async function loadData(){
-  try {
-    const res  = await fetch(SCRIPT_URL+'?action=get');
-    const data = await res.json();
-    applyConfig(data.config||{});
-    applyBlocs(data.blocs||[]);
-    applyEquipe(data.equipe||[]);
-    applySocials(data.socials||[]);
-  } catch(e){
-    console.warn('Impossible de charger les données:', e);
-  }
+// ── JSONP : seule méthode fiable avec Apps Script ──
+function loadData(){
+  window._cb = function(data){
+    try {
+      applyConfig(data.config||{});
+      applyBlocs(data.blocs||[]);
+      applyEquipe(data.equipe||[]);
+      applySocials(data.socials||[]);
+    } catch(e){ console.warn('Erreur apply:',e); }
+    // Nettoyer
+    var old=document.getElementById('_jsonp_script');
+    if(old) old.remove();
+    delete window._cb;
+  };
+  var s=document.createElement('script');
+  s.id='_jsonp_script';
+  s.src=SCRIPT_URL+'?action=get&callback=_cb';
+  s.onerror=function(){ console.warn('Erreur JSONP — données par défaut utilisées'); };
+  document.head.appendChild(s);
 }
 
 function applyConfig(c){
-  const nom = c.nom||'Nathanaël';
-  document.getElementById('site-nom').textContent  = nom;
-  document.getElementById('id-name').textContent   = nom.toUpperCase();
-  document.getElementById('id-role').textContent   = c.role||'Développeur';
-  document.getElementById('footer-nom').textContent= nom;
+  const nom=c.nom||'Nathanaël';
+  document.getElementById('site-nom').textContent=nom;
+  document.getElementById('id-name').textContent=nom.toUpperCase();
+  document.getElementById('id-role').textContent=c.role||'Développeur';
+  document.getElementById('footer-nom').textContent=nom;
 
-  // Avatar
   if(c.avatar_url){
     const av=document.getElementById('id-av');
     av.innerHTML='<img src="'+c.avatar_url+'" alt="Avatar">';
   }
 
-  // Tags
   const tagsEl=document.getElementById('id-tags');
   tagsEl.innerHTML='';
-  (c.tags||'Parkour,Impro,Webradio').split(',').forEach(t=>{
+  (c.tags||'Parkour,Impro,Webradio').split(',').forEach(function(t){
     const s=document.createElement('span');
-    s.className='id-tag';
-    s.textContent=t.trim();
+    s.className='id-tag'; s.textContent=t.trim();
     tagsEl.appendChild(s);
   });
 
-  // Discord
-  const discordLink=document.getElementById('b9');
-  if(c.discord_url) discordLink.href=c.discord_url;
+  if(c.discord_url) document.getElementById('b9').href=c.discord_url;
   document.getElementById('discord-titre').textContent=c.discord_titre||'Rejoins la commu sur Discord !';
   const tagsRow=document.getElementById('discord-tags');
   tagsRow.innerHTML='';
-  (c.discord_tags||'BLABLA,CONCOURS,CODE').split(',').forEach(t=>{
+  (c.discord_tags||'BLABLA,CONCOURS,CODE').split(',').forEach(function(t){
     const s=document.createElement('span');
-    s.className='tag-pill';
-    s.textContent=t.trim();
+    s.className='tag-pill'; s.textContent=t.trim();
     tagsRow.appendChild(s);
   });
 
-  // Bloc 10
-  document.getElementById('b10-label').textContent    = c.bloc10_label||'À la une';
-  document.getElementById('b10-titre').textContent    = c.bloc10_titre||'Mon dernier projet';
-  document.getElementById('b10-soustitre').textContent= c.bloc10_soustitre||'';
+  document.getElementById('b10-label').textContent=c.bloc10_label||'À la une';
+  document.getElementById('b10-titre').textContent=c.bloc10_titre||'Mon dernier projet';
+  document.getElementById('b10-soustitre').textContent=c.bloc10_soustitre||'';
   if(c.bloc10_url){
     const b10=document.getElementById('b10');
-    const a=document.createElement('a');
-    a.className='b10-link';
-    a.href=c.bloc10_url;
-    a.target='_blank';
-    b10.appendChild(a);
+    b10.style.cursor='pointer';
+    b10.addEventListener('click',function(){ window.open(c.bloc10_url,'_blank'); });
   }
 
-  // Recrutement
   const btnRec=document.getElementById('btn-recrutement');
   if(c.recrutement_url){
-    btnRec.addEventListener('click',()=>window.open(c.recrutement_url,'_blank'));
-  } else {
-    btnRec.style.display='none';
+    btnRec.style.display='block';
+    btnRec.addEventListener('click',function(){ window.open(c.recrutement_url,'_blank'); });
   }
 }
 
 function applyBlocs(blocs){
-  blocs.forEach(b=>{
+  blocs.forEach(function(b){
     if(b.visible==='false'||b.visible===false){
       const el=document.getElementById(b.id);
       if(el) el.classList.add('hidden');
@@ -292,13 +253,13 @@ function applyBlocs(blocs){
 function applyEquipe(equipe){
   const el=document.getElementById('team-members');
   el.innerHTML='';
-  equipe.forEach(m=>{
+  equipe.forEach(function(m){
     const div=document.createElement('div');
     div.className='member';
-    const initiale=(m.nom||'?')[0].toUpperCase();
+    const init=(m.nom||'?')[0].toUpperCase();
     const av=m.avatar_url
       ? '<div class="mbav"><img src="'+m.avatar_url+'" alt="'+m.nom+'"></div>'
-      : '<div class="mbav" style="background:'+( m.gradient||'linear-gradient(135deg,#5b5ef4,#9d5cf6)')+'">'+initiale+'</div>';
+      : '<div class="mbav" style="background:'+(m.gradient||'linear-gradient(135deg,#5b5ef4,#9d5cf6)')+'">'+init+'</div>';
     div.innerHTML=av+'<div><div class="mb-name">'+m.nom+'</div><div class="mb-role">'+m.role+'</div></div>';
     el.appendChild(div);
   });
@@ -308,12 +269,11 @@ function applySocials(socials){
   const el=document.getElementById('nav-socials');
   el.innerHTML='';
   socials
-    .filter(s=>s.visible==='true'||s.visible===true)
-    .sort((a,b)=>Number(a.ordre)-Number(b.ordre))
-    .forEach(s=>{
+    .filter(function(s){ return s.visible==='true'||s.visible===true; })
+    .sort(function(a,b){ return Number(a.ordre)-Number(b.ordre); })
+    .forEach(function(s){
       const a=document.createElement('a');
-      a.href=s.url||'#';
-      a.target='_blank';
+      a.href=s.url||'#'; a.target='_blank';
       a.setAttribute('aria-label',s.label);
       a.innerHTML='<i class="'+s.icone+'"></i>';
       el.appendChild(a);
