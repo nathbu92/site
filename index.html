@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nathanaël</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--acc:#5b5ef4;--acc2:#9d5cf6;--card:#111827;--bg:#080b18;--text:#f1f2f9;--muted:#8892b0;--r:1.25rem;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.4rem 1.5rem;max-width:64rem;margin:0 auto;}
+    .logo-name{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;background:linear-gradient(120deg,#a5b4fc,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+    nav ul{display:flex;gap:1.5rem;list-style:none;}
+    nav a{font-size:.88rem;font-weight:600;color:#9ca3af;text-decoration:none;transition:color .2s;}
+    nav a:hover{color:#fff;}
+    .nav-socials{display:flex;}
+    .nav-socials a{padding:0 9px;color:#9ca3af;font-size:15px;text-decoration:none;transition:color .2s;}
+    .nav-socials a:hover{color:#fff;}
+    main{max-width:64rem;margin:0 auto;padding:0 1.5rem 1.5rem;}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:11.4rem;gap:1rem;}
+    .block{border-radius:var(--r);overflow:hidden;background:var(--card);display:flex;flex-direction:column;justify-content:space-between;border:1px solid rgba(91,94,244,.12);position:relative;transition:transform .25s,box-shadow .25s,border-color .25s;}
+    .block:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(91,94,244,.15);border-color:rgba(91,94,244,.3);}
+    .block-label{font-size:.68rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--acc);}
+    .block-title{font-size:.92rem;font-weight:700;color:#fff;margin-top:4px;}
+    .block-sub{font-size:.75rem;color:var(--muted);margin-top:2px;}
+    .b1{order:1;grid-row:span 2;}.b2{order:2;}.b3{order:3;}.b4{order:4;}.b5{order:5;}.b6{order:6;}
+    .b7{order:7;grid-row:span 3;}.b8{order:8;}.b9{order:9;grid-column:span 2;}.b10{order:10;grid-column:span 2;}.b11{order:11;}
+    .b1{padding:1.3rem;justify-content:flex-start;gap:11px;}
+    .b1::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(157,92,246,.2),transparent 70%);pointer-events:none;}
+    .id-av{width:66px;height:66px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:#fff;box-shadow:0 0 0 3px rgba(91,94,244,.25);}
+    .id-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+    .id-name{font-family:'Space Grotesk',sans-serif;font-size:1.65rem;font-weight:800;color:#fff;line-height:1.05;margin-top:8px;}
+    .id-role{font-size:.78rem;color:var(--muted);margin-top:3px;}
+    .id-tags{margin-top:6px;display:flex;flex-direction:column;gap:2px;}
+    .id-tag{font-size:.74rem;font-weight:500;color:#818cf8;}
+    .id-tag::before{content:'• ';}
+    .id-barcode{display:flex;gap:2px;align-items:flex-end;opacity:.3;margin-top:auto;}
+    .bar{border-radius:1px;background:var(--acc);}
+    .b2,.b3{padding:.9rem;justify-content:flex-start;gap:8px;}
+    .thumbs{display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1;}
+    .thumb{border-radius:7px;background:rgba(91,94,244,.12);border:1px solid rgba(91,94,244,.08);min-height:40px;}
+    .b4{background:linear-gradient(160deg,#0f1729,#1a1040);align-items:center;justify-content:center;}
+    .phone{width:78%;max-width:155px;background:#1c1c2e;border-radius:14px;border:1px solid rgba(255,255,255,.1);padding:9px 8px;}
+    .ph-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.07);margin-bottom:5px;}
+    .ph-row{display:flex;gap:5px;margin-bottom:3px;align-items:center;}
+    .ph-av{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));flex-shrink:0;}
+    .ph-lines{flex:1;display:flex;flex-direction:column;gap:3px;}
+    .ph-line{height:4px;border-radius:2px;background:rgba(255,255,255,.07);}
+    .ph-line.s{width:55%;}
+    .ph-stats{display:flex;justify-content:space-around;margin:5px 0;}
+    .ph-stat-n{font-size:7.5px;font-weight:700;color:#fff;text-align:center;}
+    .ph-stat-l{font-size:6px;color:rgba(255,255,255,.35);text-align:center;}
+    .b5{padding:.9rem;}
+    .net-card{background:#0f1729;border-radius:9px;padding:7px;margin-top:7px;}
+    .net-top{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+    .net-av{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));flex-shrink:0;}
+    .net-name{font-size:8.5px;font-weight:700;color:#fff;}
+    .net-handle{font-size:7px;color:var(--muted);}
+    .net-line{height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin:2px 0;}
+    .net-line.w70{width:70%;}
+    .b6{background:repeating-linear-gradient(-45deg,rgba(91,94,244,.07) 0,rgba(91,94,244,.07) 1px,transparent 1px,transparent 14px),var(--card);align-items:center;justify-content:center;}
+    .pattern-txt{font-family:'Space Grotesk',sans-serif;font-size:.6rem;font-weight:700;color:rgba(165,180,252,.45);letter-spacing:3px;text-transform:uppercase;line-height:2.4;text-align:center;pointer-events:none;padding:8px;}
+    .b7{padding:1.1rem;justify-content:flex-start;gap:0;}
+    .team-head{font-size:.68rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--acc);margin-bottom:10px;}
+    .members{display:flex;flex-direction:column;gap:9px;flex:1;}
+    .member{display:flex;align-items:center;gap:8px;}
+    .mbav{width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
+    .mbav img{width:100%;height:100%;object-fit:cover;}
+    .mb-name{font-size:.78rem;font-weight:700;}
+    .mb-role{font-size:.65rem;color:var(--muted);}
+    .btn-team{width:100%;padding:9px 0;margin-top:12px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:10px;color:#fff;font-size:.76rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;flex-shrink:0;}
+    .btn-team:hover{opacity:.85;}
+    .b8{align-items:center;justify-content:center;flex-direction:row;gap:12px;}
+    .coin{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:800;}
+    .coin-a{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;}
+    .coin-b{background:rgba(255,255,255,.05);color:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.1);}
+    .b9{padding:1.4rem;justify-content:center;gap:8px;background:radial-gradient(ellipse at 85% 50%,rgba(88,101,242,.18) 0%,transparent 65%),var(--card);cursor:pointer;text-decoration:none;color:inherit;}
+    .tag-row{display:flex;gap:6px;flex-wrap:wrap;}
+    .tag-pill{font-size:.65rem;font-weight:700;padding:2px 9px;border-radius:20px;border:1.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.55);}
+    .b9 .block-title{font-size:1rem;font-weight:800;}
+    .btn-join{width:fit-content;padding:7px 18px;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.22);border-radius:30px;color:#fff;font-size:.8rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;margin-top:2px;}
+    .btn-join:hover{background:rgba(255,255,255,.18);}
+    .b10{padding:1.4rem;justify-content:center;gap:6px;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 100%);position:relative;overflow:hidden;}
+    .b10-bg{position:absolute;right:1.2rem;top:50%;transform:translateY(-50%);font-family:'Space Grotesk',sans-serif;font-size:3.5rem;font-weight:900;color:rgba(255,255,255,.07);pointer-events:none;line-height:1;letter-spacing:-3px;}
+    .b10-link{position:absolute;inset:0;z-index:1;}
+    .b11{padding:.9rem;justify-content:flex-start;gap:8px;background:linear-gradient(160deg,#111827,#1a1040);}
+    .radio-icons{display:flex;gap:6px;margin-top:4px;}
+    .radio-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;background:rgba(91,94,244,.14);border:1px solid rgba(91,94,244,.18);font-size:13px;}
+    footer{max-width:64rem;margin:0 auto;padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:#4b5563;font-style:italic;border-top:1px solid rgba(91,94,244,.08);}
+    footer a{color:#6366f1;text-decoration:underline;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .block{animation:fadeUp .4s ease both;}
+    .b1{animation-delay:.04s}.b2{animation-delay:.08s}.b3{animation-delay:.12s}
+    .b4{animation-delay:.16s}.b5{animation-delay:.20s}.b6{animation-delay:.24s}
+    .b7{animation-delay:.28s}.b8{animation-delay:.32s}.b9{animation-delay:.36s}
+    .b10{animation-delay:.40s}.b11{animation-delay:.44s}
+    .hidden{display:none!important;}
+    @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}.b7{grid-row:span 2;}.b9,.b10{grid-column:span 2;}}
+    @media(max-width:560px){.grid{grid-template-columns:1fr;}.b1,.b7{grid-row:span 1;}.b9,.b10{grid-column:span 1;}nav ul{display:none;}}
+  </style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo-name" id="site-nom">Nathanaël</a>
+  <nav><ul>
+    <li><a href="programmes.html">Mes projets</a></li>
+    <li><a href="contact.html">Me contacter</a></li>
+  </ul></nav>
+  <div class="nav-socials" id="nav-socials"></div>
+</header>
+
+<main>
+<div class="grid">
+  <div class="block b1">
+    <div class="id-av" id="id-av">N</div>
+    <div class="id-name" id="id-name">NATHANAËL</div>
+    <div class="id-role" id="id-role">Développeur</div>
+    <div class="id-tags" id="id-tags"></div>
+    <div class="id-barcode" id="barcode"></div>
+  </div>
+  <div class="block b2" id="b2">
+    <div class="block-label">Mes projets "tech"</div>
+    <div class="thumbs"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div>
+  </div>
+  <div class="block b3" id="b3">
+    <div class="block-label">Mes projets "créa"</div>
+    <div class="thumbs"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div>
+  </div>
+  <div class="block b4" id="b4">
+    <div class="phone">
+      <div class="ph-bar"></div>
+      <div class="ph-row"><div class="ph-av"></div><div class="ph-lines"><div class="ph-line"></div><div class="ph-line s"></div></div></div>
+      <div class="ph-stats">
+        <div><div class="ph-stat-n">0</div><div class="ph-stat-l">posts</div></div>
+        <div><div class="ph-stat-n">0</div><div class="ph-stat-l">abonnés</div></div>
+        <div><div class="ph-stat-n">0</div><div class="ph-stat-l">suivis</div></div>
+      </div>
+      <div class="ph-line" style="margin-top:4px;"></div><div class="ph-line s" style="margin-top:3px;"></div>
+    </div>
+  </div>
+  <div class="block b5" id="b5">
+    <div class="block-label">Retrouve-moi sur</div>
+    <div class="block-title">@nathabu</div>
+    <div class="net-card"><div class="net-top"><div class="net-av"></div><div><div class="net-name">Nathanaël</div><div class="net-handle">@nathabu</div></div></div><div class="net-line"></div><div class="net-line w70"></div></div>
+  </div>
+  <div class="block b6" id="b6">
+    <div class="pattern-txt">NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH</div>
+  </div>
+  <div class="block b7">
+    <div class="team-head">L'équipe</div>
+    <div class="members" id="team-members"></div>
+    <button class="btn-team" id="btn-recrutement">Rejoindre l'équipe</button>
+  </div>
+  <div class="block b8" id="b8">
+    <div class="coin coin-a">N</div>
+    <div class="coin coin-b">?</div>
+  </div>
+  <a class="block b9" id="b9" href="#">
+    <div class="tag-row" id="discord-tags"></div>
+    <div class="block-title" id="discord-titre">Rejoins la commu sur Discord !</div>
+    <button class="btn-join">Rejoindre →</button>
+  </a>
+  <div class="block b10" id="b10">
+    <div class="block-label" id="b10-label">À la une</div>
+    <div class="block-title" id="b10-titre">Mon dernier projet</div>
+    <div class="block-sub" id="b10-soustitre"></div>
+    <div class="b10-bg">NB</div>
+  </div>
+  <div class="block b11" id="b11">
+    <div class="block-label">Webradio</div>
+    <div class="block-title">Les Martinets</div>
+    <div class="radio-icons">
+      <div class="radio-icon"><i class="fas fa-radio" style="color:#818cf8;"></i></div>
+      <div class="radio-icon"><i class="fas fa-microphone" style="color:#a855f7;"></i></div>
+      <div class="radio-icon"><i class="fas fa-music" style="color:#06b6d4;"></i></div>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div>Codé avec 🫶 par <span id="footer-nom">Nathanaël</span>. Tous droits réservés.</div>
+  <a href="mentions-legales.html">Mentions légales</a>
+</footer>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_hDRMzdkQfxzeNR_okZIof_SzBlbgW-GSHJXmvbQWgwNKIlHLFrcotQsDtTcABMOp/exec';
+
+// ── BARCODE ──
+(function(){
+  const bc=document.getElementById('barcode');
+  [22,12,28,16,24,10,26,18,14,30,20,16,26,12,22,18,28,14,24,16].forEach(h=>{
+    const b=document.createElement('div');
+    b.className='bar';
+    b.style.cssText='width:2px;height:'+h+'px;border-radius:1px;';
+    bc.appendChild(b);
+  });
+})();
+
+// ── GLOW ──
+document.querySelectorAll('.block').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    card.style.backgroundImage='radial-gradient(180px circle at '+(e.clientX-r.left)+'px '+(e.clientY-r.top)+'px,rgba(91,94,244,.07),transparent 70%)';
+  });
+  card.addEventListener('mouseleave',()=>card.style.backgroundImage='');
+});
+
+// ── LOAD DATA ──
+async function loadData(){
+  try {
+    const res  = await fetch(SCRIPT_URL+'?action=get');
+    const data = await res.json();
+    applyConfig(data.config||{});
+    applyBlocs(data.blocs||[]);
+    applyEquipe(data.equipe||[]);
+    applySocials(data.socials||[]);
+  } catch(e){
+    console.warn('Impossible de charger les données:', e);
+  }
+}
+
+function applyConfig(c){
+  const nom = c.nom||'Nathanaël';
+  document.getElementById('site-nom').textContent  = nom;
+  document.getElementById('id-name').textContent   = nom.toUpperCase();
+  document.getElementById('id-role').textContent   = c.role||'Développeur';
+  document.getElementById('footer-nom').textContent= nom;
+
+  // Avatar
+  if(c.avatar_url){
+    const av=document.getElementById('id-av');
+    av.innerHTML='<img src="'+c.avatar_url+'" alt="Avatar">';
+  }
+
+  // Tags
+  const tagsEl=document.getElementById('id-tags');
+  tagsEl.innerHTML='';
+  (c.tags||'Parkour,Impro,Webradio').split(',').forEach(t=>{
+    const s=document.createElement('span');
+    s.className='id-tag';
+    s.textContent=t.trim();
+    tagsEl.appendChild(s);
+  });
+
+  // Discord
+  const discordLink=document.getElementById('b9');
+  if(c.discord_url) discordLink.href=c.discord_url;
+  document.getElementById('discord-titre').textContent=c.discord_titre||'Rejoins la commu sur Discord !';
+  const tagsRow=document.getElementById('discord-tags');
+  tagsRow.innerHTML='';
+  (c.discord_tags||'BLABLA,CONCOURS,CODE').split(',').forEach(t=>{
+    const s=document.createElement('span');
+    s.className='tag-pill';
+    s.textContent=t.trim();
+    tagsRow.appendChild(s);
+  });
+
+  // Bloc 10
+  document.getElementById('b10-label').textContent    = c.bloc10_label||'À la une';
+  document.getElementById('b10-titre').textContent    = c.bloc10_titre||'Mon dernier projet';
+  document.getElementById('b10-soustitre').textContent= c.bloc10_soustitre||'';
+  if(c.bloc10_url){
+    const b10=document.getElementById('b10');
+    const a=document.createElement('a');
+    a.className='b10-link';
+    a.href=c.bloc10_url;
+    a.target='_blank';
+    b10.appendChild(a);
+  }
+
+  // Recrutement
+  const btnRec=document.getElementById('btn-recrutement');
+  if(c.recrutement_url){
+    btnRec.addEventListener('click',()=>window.open(c.recrutement_url,'_blank'));
+  } else {
+    btnRec.style.display='none';
+  }
+}
+
+function applyBlocs(blocs){
+  blocs.forEach(b=>{
+    if(b.visible==='false'||b.visible===false){
+      const el=document.getElementById(b.id);
+      if(el) el.classList.add('hidden');
+    }
+  });
+}
+
+function applyEquipe(equipe){
+  const el=document.getElementById('team-members');
+  el.innerHTML='';
+  equipe.forEach(m=>{
+    const div=document.createElement('div');
+    div.className='member';
+    const initiale=(m.nom||'?')[0].toUpperCase();
+    const av=m.avatar_url
+      ? '<div class="mbav"><img src="'+m.avatar_url+'" alt="'+m.nom+'"></div>'
+      : '<div class="mbav" style="background:'+( m.gradient||'linear-gradient(135deg,#5b5ef4,#9d5cf6)')+'">'+initiale+'</div>';
+    div.innerHTML=av+'<div><div class="mb-name">'+m.nom+'</div><div class="mb-role">'+m.role+'</div></div>';
+    el.appendChild(div);
+  });
+}
+
+function applySocials(socials){
+  const el=document.getElementById('nav-socials');
+  el.innerHTML='';
+  socials
+    .filter(s=>s.visible==='true'||s.visible===true)
+    .sort((a,b)=>Number(a.ordre)-Number(b.ordre))
+    .forEach(s=>{
+      const a=document.createElement('a');
+      a.href=s.url||'#';
+      a.target='_blank';
+      a.setAttribute('aria-label',s.label);
+      a.innerHTML='<i class="'+s.icone+'"></i>';
+      el.appendChild(a);
+    });
+}
+
+loadData();
+</script>
+</body>
+</html>
