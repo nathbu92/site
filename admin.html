@@ -214,7 +214,11 @@
         </div>
         <div class="field"><label>Bio</label><textarea id="cfg-bio"></textarea></div>
         <div class="field"><label>Tags (virgule)</label><input type="text" id="cfg-tags" placeholder="Parkour,Impro,Webradio"></div>
-        <div class="field"><label>URL photo de profil</label><input type="url" id="cfg-avatar" placeholder="https://..."></div>
+        <div class="field">
+          <label>URL photo de profil</label>
+          <input type="url" id="cfg-avatar" placeholder="https://nathbu92.github.io/site/images/nathanael.png">
+          <span style="font-size:.68rem;color:#64748b;margin-top:3px;">📁 Mets tes images dans <code style="background:rgba(91,94,244,.12);padding:1px 5px;border-radius:4px;color:#a5b4fc;">images/</code> sur GitHub → URL : <code style="background:rgba(91,94,244,.12);padding:1px 5px;border-radius:4px;color:#a5b4fc;">https://nathbu92.github.io/site/images/FICHIER.png</code></span>
+        </div>
       </div>
       <div class="section-card">
         <div class="section-title">Bloc Discord</div>
@@ -513,7 +517,7 @@ function makeMembreEl(m,i){
   const d=document.createElement('div'); d.className='list-item'; d.dataset.index=i;
   d.innerHTML=`<div class="list-item-header"><span class="list-item-title">${m.nom||'Nouveau membre'}</span><button class="btn-del" data-del="${i}"><i class="fas fa-trash"></i></button></div>
     <div class="field-row"><div class="field"><label>Nom</label><input type="text" class="m-nom" value="${esc(m.nom||'')}"></div><div class="field"><label>Rôle</label><input type="text" class="m-role" value="${esc(m.role||'')}"></div></div>
-    <div class="field-row"><div class="field"><label>URL photo</label><input type="url" class="m-avatar" value="${esc(m.avatar_url||'')}" placeholder="https://..."></div><div class="field"><label>Gradient CSS</label><input type="text" class="m-gradient" value="${esc(m.gradient||'linear-gradient(135deg,#5b5ef4,#9d5cf6)')}"></div></div>`;
+    <div class="field-row"><div class="field"><label>URL photo</label><input type="url" &nbsp; placeholder="https://nathbu92.github.io/site/images/..." class="m-avatar" value="${esc(m.avatar_url||'')}" placeholder="https://nathbu92.github.io/site/images/photo.png"></div><div class="field"><label>Gradient CSS</label><input type="text" class="m-gradient" value="${esc(m.gradient||'linear-gradient(135deg,#5b5ef4,#9d5cf6)')}"></div></div>`;
   d.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>{ d.querySelector('.list-item-title').textContent=d.querySelector('.m-nom').value||'Nouveau membre'; setDirty(); }));
   d.querySelector('[data-del]').addEventListener('click',()=>{ state.equipe.splice(i,1); renderEquipe(); setDirty(); });
   return d;

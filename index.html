@@ -28,7 +28,11 @@
       display:flex;align-items:center;justify-content:center;
       font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:800;color:#fff;
       animation:pulse-logo 1.8s ease-in-out infinite;
-      position:relative;
+      position:relative;overflow:hidden;
+    }
+    .loader-logo img{
+      width:100%;height:100%;object-fit:cover;border-radius:50%;
+      position:absolute;inset:0;
     }
     .loader-logo::after{
       content:'';position:absolute;inset:-6px;border-radius:50%;
@@ -146,7 +150,7 @@
 <!-- ══ LOADER ══ -->
 <div id="loader">
   <div class="loader-inner">
-    <div class="loader-logo">N</div>
+    <div class="loader-logo"><img id="loader-avatar" src="https://nathbu92.github.io/site/images/nathanael.png" alt="N" onerror="this.style.display='none';this.parentElement.textContent='N'"></div>
     <div class="loader-bar-wrap">
       <div class="loader-bar" id="loader-bar"></div>
     </div>
