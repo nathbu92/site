@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Discord — Nathanaël</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{--acc:#5b5ef4;--acc2:#9d5cf6;--card:#111827;--bg:#080b18;--text:#f1f2f9;--muted:#8892b0;--r:1.25rem;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+    header{display:flex;align-items:center;justify-content:space-between;padding:1.4rem 1.5rem;max-width:64rem;margin:0 auto;width:100%;}
+    .logo-name{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;background:linear-gradient(120deg,#a5b4fc,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+    nav ul{display:flex;gap:1.5rem;list-style:none;}
+    nav a{font-size:.88rem;font-weight:600;color:#9ca3af;text-decoration:none;transition:color .2s;}
+    nav a:hover{color:#fff;}
+    .nav-socials{display:flex;}
+    .nav-socials a{padding:0 9px;color:#9ca3af;font-size:15px;text-decoration:none;transition:color .2s;}
+    .nav-socials a:hover{color:#fff;}
+
+    main{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem 1.5rem;}
+
+    .redirect-box{
+      background:var(--card);border-radius:var(--r);
+      border:1px solid rgba(91,94,244,.2);
+      padding:3rem 2.5rem;text-align:center;
+      max-width:480px;width:100%;
+      position:relative;overflow:hidden;
+      animation:fadeUp .5s ease both;
+    }
+    .redirect-box::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 50% 0%,rgba(91,94,244,.12),transparent 65%);
+      pointer-events:none;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ÉTAT CHARGEMENT */
+    .state{display:none;flex-direction:column;align-items:center;gap:1.2rem;}
+    .state.active{display:flex;}
+
+    /* SPINNER */
+    .spinner-wrap{position:relative;width:56px;height:56px;margin:0 auto;}
+    .spinner{
+      width:56px;height:56px;border-radius:50%;
+      border:3px solid rgba(91,94,244,.15);
+      border-top-color:var(--acc);
+      animation:spin 1s linear infinite;
+    }
+    .spinner-icon{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      font-size:20px;color:var(--acc);
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* DONE */
+    .done-icon{font-size:2.8rem;color:#22c55e;animation:popIn .4s cubic-bezier(.34,1.56,.64,1) both;}
+    @keyframes popIn{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+
+    /* ERREUR */
+    .err-icon{font-size:2.8rem;color:#ef4444;}
+
+    .redirect-title{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;color:#fff;}
+    .redirect-sub{font-size:.84rem;color:var(--muted);line-height:1.65;}
+    .redirect-sub a{color:#a5b4fc;text-decoration:underline;cursor:pointer;}
+
+    /* BARRE */
+    .redirect-bar{height:3px;border-radius:2px;background:rgba(91,94,244,.12);margin:.5rem 0;overflow:hidden;}
+    .redirect-bar-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:0%;transition:width linear;}
+
+    /* COMPTE À REBOURS */
+    .countdown-num{
+      font-family:'Space Grotesk',sans-serif;
+      font-size:3rem;font-weight:900;
+      background:linear-gradient(135deg,var(--acc),var(--acc2));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      line-height:1;
+    }
+
+    .btn-manual{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 22px;
+      background:linear-gradient(135deg,#5865f2,var(--acc2));
+      border:none;border-radius:30px;color:#fff;
+      font-size:.85rem;font-weight:700;cursor:pointer;
+      font-family:'Inter',sans-serif;text-decoration:none;
+      transition:opacity .2s,transform .15s;
+    }
+    .btn-manual:hover{opacity:.88;transform:scale(.98);}
+
+    footer{max-width:64rem;margin:0 auto;padding:.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:#4b5563;font-style:italic;border-top:1px solid rgba(91,94,244,.08);width:100%;}
+    footer a{color:#6366f1;text-decoration:underline;}
+    @media(max-width:560px){nav ul{display:none;}}
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo-name" id="site-nom">Nathanaël</a>
+  <nav><ul>
+    <li><a href="programmes.html">Mes projets</a></li>
+    <li><a href="contact.html">Me contacter</a></li>
+  </ul></nav>
+  <div class="nav-socials" id="nav-socials"></div>
+</header>
+
+<main>
+  <div class="redirect-box">
+
+    <!-- ÉTAT : CHARGEMENT LIEN -->
+    <div class="state active" id="state-loading">
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+        <div class="spinner-icon"><i class="fab fa-discord"></i></div>
+      </div>
+      <div class="redirect-title">Récupération du lien...</div>
+      <div class="redirect-sub">On cherche l'invitation Discord.</div>
+    </div>
+
+    <!-- ÉTAT : COMPTE À REBOURS -->
+    <div class="state" id="state-countdown">
+      <div class="countdown-num" id="countdown-num">3</div>
+      <div class="redirect-title">Redirection vers Discord</div>
+      <div class="redirect-sub">Tu vas être redirigé automatiquement.<br>Si rien ne se passe, <a id="manual-link" href="#">clique ici</a>.</div>
+      <div class="redirect-bar"><div class="redirect-bar-fill" id="bar-fill"></div></div>
+      <a class="btn-manual" id="btn-manual" href="#"><i class="fab fa-discord"></i> Rejoindre maintenant</a>
+    </div>
+
+    <!-- ÉTAT : SUCCÈS -->
+    <div class="state" id="state-done">
+      <div class="done-icon"><i class="fas fa-check-circle"></i></div>
+      <div class="redirect-title">Redirection en cours !</div>
+      <div class="redirect-sub">Si tu n'es pas redirigé, <a id="done-link" href="#">clique ici</a>.</div>
+    </div>
+
+    <!-- ÉTAT : ERREUR (pas de lien configuré) -->
+    <div class="state" id="state-error">
+      <div class="err-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <div class="redirect-title">Lien non configuré</div>
+      <div class="redirect-sub">Le lien Discord n'a pas encore été renseigné dans l'admin.<br>Reviens plus tard !</div>
+      <a class="btn-manual" href="index.html" style="background:linear-gradient(135deg,var(--acc),var(--acc2));margin-top:.5rem;"><i class="fas fa-home"></i> Retour à l'accueil</a>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div>Codé avec 🫶 par <span id="footer-nom">Nathanaël</span>. Tous droits réservés.</div>
+  <a href="mentions-legales.html">Mentions légales</a>
+</footer>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6aZ1_cwiijbbDE6WZR-Yq29LkAlQtNZ5mysjzPdVApxFVcYEASodSzLtQ4v4ltCnU/exec';
+const DELAY = 3;
+
+let discordUrl = null;
+
+function setState(id){
+  document.querySelectorAll('.state').forEach(s=>s.classList.remove('active'));
+  document.getElementById('state-'+id).classList.add('active');
+}
+
+function startCountdown(url){
+  discordUrl = url;
+  document.getElementById('manual-link').href = url;
+  document.getElementById('btn-manual').href  = url;
+  document.getElementById('done-link').href   = url;
+
+  setState('countdown');
+
+  // Barre de progression
+  const bar = document.getElementById('bar-fill');
+  bar.style.transition = `width ${DELAY}s linear`;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ bar.style.width='100%'; }));
+
+  // Compte à rebours
+  let n = DELAY;
+  const num = document.getElementById('countdown-num');
+  const timer = setInterval(()=>{
+    n--;
+    num.textContent = n;
+    if(n <= 0){
+      clearInterval(timer);
+      setState('done');
+      window.location.href = url;
+    }
+  }, 1000);
+}
+
+// Charger les données via JSONP
+window._cbDiscord = function(data){
+  const url = (data.config && data.config.discord_url) ? data.config.discord_url.trim() : '';
+
+  // Appliquer nom + socials
+  const nom = (data.config && data.config.nom) || 'Nathanaël';
+  document.getElementById('site-nom').textContent = nom;
+  document.getElementById('footer-nom').textContent = nom;
+  if(data.socials){
+    const el = document.getElementById('nav-socials'); el.innerHTML='';
+    (data.socials||[])
+      .filter(s=>s.visible==='true'||s.visible===true)
+      .sort((a,b)=>Number(a.ordre)-Number(b.ordre))
+      .forEach(s=>{
+        const a=document.createElement('a');
+        a.href=s.url||'#'; a.target='_blank'; a.setAttribute('aria-label',s.label);
+        a.innerHTML='<i class="'+s.icone+'"></i>'; el.appendChild(a);
+      });
+  }
+
+  // Nettoyer
+  const old=document.getElementById('_jsonp_discord');
+  if(old) old.remove();
+  delete window._cbDiscord;
+
+  if(!url || url === '#'){
+    setState('error');
+    return;
+  }
+  startCountdown(url);
+};
+
+// Lancer le JSONP
+(function(){
+  const s = document.createElement('script');
+  s.id = '_jsonp_discord';
+  s.src = SCRIPT_URL + '?action=get&callback=_cbDiscord&t=' + Date.now();
+  s.onerror = function(){
+    setState('error');
+    delete window._cbDiscord;
+  };
+  // Timeout 8s
+  setTimeout(()=>{
+    if(window._cbDiscord){
+      delete window._cbDiscord;
+      setState('error');
+    }
+  }, 8000);
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>

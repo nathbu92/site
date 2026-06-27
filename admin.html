@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — Nathanaël</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --acc:#5b5ef4;--acc2:#9d5cf6;--bg:#080b18;--card:#0e1220;
+      --card2:#111827;--text:#f1f2f9;--muted:#8892b0;--r:14px;
+      --border:rgba(91,94,244,.18);--danger:#ef4444;--success:#22c55e;
+    }
+
+    /* ── RESET ── */
+    html,body{height:100%;overflow:hidden;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+
+    /* ── LOGIN ── */
+    #login-screen{
+      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+      background:var(--bg);z-index:999;padding:1rem;
+    }
+    .login-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:380px;text-align:center;}
+    .login-icon{font-size:2.5rem;margin-bottom:1rem;}
+    .login-title{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+    .login-sub{font-size:.82rem;color:var(--muted);margin-bottom:1.8rem;}
+    .login-box input{width:100%;background:#080b18;border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:.9rem;color:var(--text);font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;margin-bottom:.75rem;}
+    .login-box input:focus{border-color:rgba(91,94,244,.5);}
+    .btn-login{width:100%;padding:11px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:10px;color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;}
+    .btn-login:hover{opacity:.88;}
+    .login-err{font-size:.78rem;color:var(--danger);margin-top:.5rem;display:none;}
+
+    /* ── SHELL ── */
+    #app{display:none;height:100vh;flex-direction:row;overflow:hidden;}
+
+    /* SIDEBAR — scroll interne */
+    .sidebar{
+      width:220px;flex-shrink:0;background:var(--card);
+      border-right:1px solid var(--border);
+      display:flex;flex-direction:column;
+      height:100vh;overflow-y:auto;
+    }
+    .sidebar-logo{padding:1.2rem 1.2rem .8rem;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;background:linear-gradient(120deg,#a5b4fc,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;border-bottom:1px solid var(--border);flex-shrink:0;}
+    .sidebar-logo span{display:block;font-size:.65rem;font-weight:500;color:var(--muted);-webkit-text-fill-color:var(--muted);margin-top:2px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:.6rem 1.2rem;font-size:.82rem;font-weight:500;color:var(--muted);cursor:pointer;border-left:2px solid transparent;transition:all .2s;text-decoration:none;user-select:none;}
+    .nav-item i{width:16px;text-align:center;font-size:13px;}
+    .nav-item:hover{color:var(--text);background:rgba(91,94,244,.07);}
+    .nav-item.active{color:#a5b4fc;border-left-color:var(--acc);background:rgba(91,94,244,.1);}
+    .nav-sep{font-size:.62rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(136,146,176,.4);padding:.8rem 1.2rem .3rem;}
+    .sidebar-footer{margin-top:auto;padding:1rem 1.2rem;border-top:1px solid var(--border);flex-shrink:0;}
+    .btn-logout{width:100%;padding:7px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#f87171;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+    .btn-logout:hover{background:rgba(239,68,68,.2);}
+    .btn-viewsite{width:100%;padding:7px;background:rgba(91,94,244,.1);border:1px solid rgba(91,94,244,.2);border-radius:8px;color:#a5b4fc;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;text-decoration:none;display:block;text-align:center;margin-bottom:8px;}
+    .btn-viewsite:hover{background:rgba(91,94,244,.2);}
+
+    /* CONTENT — scroll principal ici */
+    .content{flex:1;height:100vh;overflow-y:auto;padding:1.5rem 1.5rem 5rem;}
+    .page{display:none;}
+    .page.active{display:block;}
+
+    /* TOPBAR */
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+    .topbar h1{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;}
+    .topbar p{font-size:.78rem;color:var(--muted);margin-top:2px;}
+
+    /* CARDS */
+    .section-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:1.3rem;margin-bottom:1rem;}
+    .section-title{font-size:.72rem;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--acc);margin-bottom:1rem;}
+
+    /* FORM */
+    .field{display:flex;flex-direction:column;gap:5px;margin-bottom:.85rem;}
+    .field:last-child{margin-bottom:0;}
+    .field label{font-size:.72rem;font-weight:600;color:var(--muted);}
+    .field input,.field textarea,.field select{background:#080b18;border:1px solid var(--border);border-radius:9px;padding:9px 12px;font-size:.84rem;color:var(--text);font-family:'Inter',sans-serif;outline:none;width:100%;transition:border-color .2s;}
+    .field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(91,94,244,.5);}
+    .field textarea{resize:vertical;min-height:80px;}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+    .field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
+
+    /* TOGGLE */
+    .toggle-wrap{display:flex;align-items:center;gap:8px;}
+    .toggle{position:relative;width:38px;height:21px;flex-shrink:0;}
+    .toggle input{opacity:0;width:0;height:0;}
+    .toggle-slider{position:absolute;inset:0;background:#1e2740;border-radius:21px;cursor:pointer;transition:background .2s;border:1px solid var(--border);}
+    .toggle-slider::before{content:'';position:absolute;width:15px;height:15px;left:2px;top:2px;background:#fff;border-radius:50%;transition:transform .2s;}
+    .toggle input:checked + .toggle-slider{background:var(--acc);border-color:var(--acc);}
+    .toggle input:checked + .toggle-slider::before{transform:translateX(17px);}
+    .toggle-label{font-size:.8rem;color:var(--muted);}
+
+    /* BOUTONS */
+    .btn-save{padding:9px 20px;background:linear-gradient(135deg,var(--acc),var(--acc2));border:none;border-radius:9px;color:#fff;font-size:.82rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:7px;transition:opacity .2s;}
+    .btn-save:hover{opacity:.88;}
+    .btn-save:disabled{opacity:.5;cursor:not-allowed;}
+    .btn-add{padding:7px 14px;background:rgba(91,94,244,.12);border:1px solid rgba(91,94,244,.25);border-radius:8px;color:#a5b4fc;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:6px;transition:background .2s;}
+    .btn-add:hover{background:rgba(91,94,244,.22);}
+    .btn-del{padding:5px 10px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.18);border-radius:7px;color:#f87171;font-size:.72rem;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+    .btn-del:hover{background:rgba(239,68,68,.18);}
+
+    /* LISTES */
+    .list-item{background:#080b18;border:1px solid var(--border);border-radius:10px;padding:.85rem;margin-bottom:.6rem;display:flex;flex-direction:column;gap:.6rem;}
+    .list-item-header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+    .list-item-title{font-size:.82rem;font-weight:600;color:var(--text);}
+    .list-item-actions{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+    .drag-handle{color:var(--muted);font-size:12px;cursor:grab;padding:2px 6px;}
+
+    /* BLOCS VISIBILITÉ */
+    .blocs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;}
+    .bloc-toggle{background:#080b18;border:1px solid var(--border);border-radius:10px;padding:.75rem;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+    .bloc-toggle-name{font-size:.8rem;font-weight:600;}
+
+    /* BLOCS PERSO — accordéon */
+    .bloc-perso{background:#080b18;border:1px solid var(--border);border-radius:12px;margin-bottom:.7rem;overflow:hidden;}
+    .bloc-perso-header{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1rem;cursor:pointer;user-select:none;}
+    .bloc-perso-header:hover{background:rgba(91,94,244,.05);}
+    .bloc-perso-name{font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:8px;}
+    .bloc-perso-badge{font-size:.65rem;padding:2px 7px;border-radius:10px;background:rgba(91,94,244,.15);color:#a5b4fc;border:1px solid rgba(91,94,244,.25);}
+    .bloc-perso-body{padding:0 1rem 1rem;display:none;flex-direction:column;gap:.75rem;}
+    .bloc-perso-body.open{display:flex;}
+    .bloc-perso-chevron{color:var(--muted);font-size:12px;transition:transform .2s;}
+    .bloc-perso-header.open .bloc-perso-chevron{transform:rotate(180deg);}
+
+    /* TYPE SELECTOR */
+    .type-btns{display:flex;gap:6px;flex-wrap:wrap;}
+    .type-btn{padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+    .type-btn.active,.type-btn:hover{background:rgba(91,94,244,.15);color:#a5b4fc;border-color:rgba(91,94,244,.4);}
+
+    /* SAVE BAR — collée en bas de .content */
+    .save-bar{
+      position:fixed;bottom:0;right:0;
+      left:220px; /* largeur sidebar */
+      z-index:50;
+      background:rgba(8,11,24,.96);backdrop-filter:blur(12px);
+      border-top:1px solid var(--border);
+      padding:.85rem 1.5rem;
+      display:flex;align-items:center;justify-content:space-between;
+      transform:translateY(100%);transition:transform .25s;
+    }
+    .save-bar.visible{transform:translateY(0);}
+    .save-bar p{font-size:.8rem;color:var(--muted);}
+
+    /* TOAST */
+    .toast{position:fixed;top:20px;right:20px;z-index:9999;background:#1a2035;border:1px solid rgba(91,94,244,.3);border-radius:12px;padding:10px 16px;font-size:.8rem;font-weight:600;display:flex;align-items:center;gap:8px;transform:translateY(-60px);opacity:0;transition:all .3s;pointer-events:none;}
+    .toast.show{transform:translateY(0);opacity:1;}
+    .toast.ok{border-color:rgba(34,197,94,.3);}
+    .toast.ok i{color:var(--success);}
+    .toast.err{border-color:rgba(239,68,68,.3);}
+    .toast.err i{color:var(--danger);}
+
+    .spin{animation:spinA .7s linear infinite;display:inline-block;}
+    @keyframes spinA{to{transform:rotate(360deg);}}
+
+    /* APERÇU */
+    .preview-iframe-wrap{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;aspect-ratio:16/9;}
+    .preview-iframe-wrap iframe{width:100%;height:100%;border:none;}
+
+    @media(max-width:768px){
+      .sidebar{display:none;}
+      .save-bar{left:0;}
+      .field-row,.field-row3{grid-template-columns:1fr;}
+      .blocs-grid{grid-template-columns:1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Panel Admin</div>
+    <div class="login-sub">nathabu.fr — accès restreint</div>
+    <input type="password" id="login-pwd" placeholder="Mot de passe" autocomplete="current-password">
+    <button class="btn-login" id="btn-login">Se connecter</button>
+    <div class="login-err" id="login-err">Mot de passe incorrect.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">Admin Panel<span>nathabu.fr</span></div>
+    <div class="nav-sep">Site</div>
+    <div class="nav-item active" data-page="identite"><i class="fas fa-id-card"></i> Identité</div>
+    <div class="nav-item" data-page="blocs"><i class="fas fa-th-large"></i> Blocs visibles</div>
+    <div class="nav-item" data-page="blocs-perso"><i class="fas fa-paint-brush"></i> Blocs perso</div>
+    <div class="nav-item" data-page="equipe"><i class="fas fa-users"></i> Équipe</div>
+    <div class="nav-sep">Contenu</div>
+    <div class="nav-item" data-page="projets"><i class="fas fa-code"></i> Projets</div>
+    <div class="nav-item" data-page="socials"><i class="fas fa-share-alt"></i> Réseaux sociaux</div>
+    <div class="nav-sep">Outils</div>
+    <div class="nav-item" data-page="apercu"><i class="fas fa-eye"></i> Aperçu live</div>
+    <div class="sidebar-footer">
+      <a href="index.html" target="_blank" class="btn-viewsite"><i class="fas fa-external-link-alt"></i> Voir le site</a>
+      <button class="btn-logout" id="btn-logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- IDENTITÉ -->
+    <div class="page active" id="page-identite">
+      <div class="topbar"><div><h1>Identité</h1><p>Carte d'identité et infos principales</p></div></div>
+      <div class="section-card">
+        <div class="section-title">Carte d'identité</div>
+        <div class="field-row">
+          <div class="field"><label>Prénom / Nom affiché</label><input type="text" id="cfg-nom"></div>
+          <div class="field"><label>Rôle / Titre</label><input type="text" id="cfg-role"></div>
+        </div>
+        <div class="field"><label>Bio</label><textarea id="cfg-bio"></textarea></div>
+        <div class="field"><label>Tags (virgule)</label><input type="text" id="cfg-tags" placeholder="Parkour,Impro,Webradio"></div>
+        <div class="field"><label>URL photo de profil</label><input type="url" id="cfg-avatar" placeholder="https://..."></div>
+      </div>
+      <div class="section-card">
+        <div class="section-title">Bloc Discord</div>
+        <div class="field"><label>Lien d'invitation Discord</label><input type="url" id="cfg-discord-url" placeholder="https://discord.gg/..."></div>
+        <div class="field"><label>Tags (virgule)</label><input type="text" id="cfg-discord-tags" placeholder="BLABLA,CONCOURS,CODE"></div>
+        <div class="field"><label>Titre du bloc</label><input type="text" id="cfg-discord-titre"></div>
+      </div>
+      <div class="section-card">
+        <div class="section-title">Bloc « À la une »</div>
+        <div class="field-row">
+          <div class="field"><label>Label</label><input type="text" id="cfg-b10-label"></div>
+          <div class="field"><label>Titre</label><input type="text" id="cfg-b10-titre"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Sous-titre</label><input type="text" id="cfg-b10-soustitre"></div>
+          <div class="field"><label>Lien cliquable (optionnel)</label><input type="url" id="cfg-b10-url" placeholder="https://..."></div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-title">Recrutement</div>
+        <div class="field"><label>Lien formulaire (laisser vide = bouton masqué)</label><input type="url" id="cfg-recrutement-url" placeholder="https://..."></div>
+      </div>
+    </div>
+
+    <!-- BLOCS VISIBILITÉ -->
+    <div class="page" id="page-blocs">
+      <div class="topbar"><div><h1>Blocs visibles</h1><p>Active ou désactive les blocs de la page d'accueil</p></div></div>
+      <div class="section-card">
+        <div class="section-title">Visibilité</div>
+        <div class="blocs-grid" id="blocs-grid"></div>
+      </div>
+    </div>
+
+    <!-- BLOCS PERSONNALISABLES -->
+    <div class="page" id="page-blocs-perso">
+      <div class="topbar"><div><h1>Blocs personnalisables</h1><p>Personnalise chaque bloc individuellement</p></div></div>
+      <div id="blocs-perso-list"></div>
+    </div>
+
+    <!-- ÉQUIPE -->
+    <div class="page" id="page-equipe">
+      <div class="topbar"><div><h1>Équipe</h1><p>Membres affichés sur la page d'accueil</p></div><button class="btn-add" id="btn-add-membre"><i class="fas fa-plus"></i> Ajouter</button></div>
+      <div id="equipe-list"></div>
+    </div>
+
+    <!-- PROJETS -->
+    <div class="page" id="page-projets">
+      <div class="topbar"><div><h1>Projets</h1><p>Page programmes</p></div><button class="btn-add" id="btn-add-projet"><i class="fas fa-plus"></i> Ajouter</button></div>
+      <div id="projets-list"></div>
+    </div>
+
+    <!-- RÉSEAUX -->
+    <div class="page" id="page-socials">
+      <div class="topbar"><div><h1>Réseaux sociaux</h1><p>Liens dans la navbar</p></div><button class="btn-add" id="btn-add-social"><i class="fas fa-plus"></i> Ajouter</button></div>
+      <div id="socials-list"></div>
+    </div>
+
+    <!-- APERÇU -->
+    <div class="page" id="page-apercu">
+      <div class="topbar"><div><h1>Aperçu live</h1><p>Prévisualisation du site</p></div></div>
+      <div class="preview-iframe-wrap"><iframe src="index.html" id="preview-frame"></iframe></div>
+      <div style="margin-top:.8rem;display:flex;gap:.6rem;">
+        <button class="btn-add" onclick="document.getElementById('preview-frame').src='index.html?t='+Date.now()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+        <button class="btn-add" onclick="window.open('index.html','_blank')"><i class="fas fa-external-link-alt"></i> Ouvrir</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- SAVE BAR -->
+  <div class="save-bar" id="save-bar">
+    <p><i class="fas fa-circle" style="color:var(--acc);font-size:8px;margin-right:6px;"></i>Modifications non sauvegardées</p>
+    <button class="btn-save" id="btn-save-all"><i class="fas fa-save"></i> Sauvegarder</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg"></span></div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6aZ1_cwiijbbDE6WZR-Yq29LkAlQtNZ5mysjzPdVApxFVcYEASodSzLtQ4v4ltCnU/exec';
+
+// Définition des blocs personnalisables
+const BLOCS_DEF = [
+  { id:'b2',  label:'Projets "tech"',   desc:'Bloc avec miniatures de projets tech' },
+  { id:'b3',  label:'Projets "créa"',   desc:'Bloc avec miniatures de projets créa' },
+  { id:'b4',  label:'Phone mock',        desc:'Simulation de profil mobile (Instagram...)' },
+  { id:'b5',  label:'Réseau social',     desc:'Bloc réseau social avec pseudo et aperçu' },
+  { id:'b6',  label:'Pattern déco',      desc:'Bloc décoratif avec répétition de texte' },
+  { id:'b8',  label:'Bloc libre',        desc:'Bloc personnalisable librement' },
+  { id:'b10', label:'À la une',          desc:'Grand bloc du bas — une information à la une' },
+  { id:'b11', label:'Webradio',          desc:'Bloc Webradio Les Martinets' },
+];
+
+let state = { config:{}, blocs:[], equipe:[], projets:[], socials:[], blocsPerso:{} };
+let dirty = false;
+let token = null;
+
+// ── AUTH ──
+document.getElementById('login-pwd').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('btn-login').addEventListener('click', doLogin);
+document.getElementById('btn-logout').addEventListener('click', ()=>{ token=null; sessionStorage.removeItem('admin_token'); location.reload(); });
+
+async function doLogin(){
+  const pwd = document.getElementById('login-pwd').value;
+  const btn = document.getElementById('btn-login');
+  btn.textContent = 'Connexion...';
+  try {
+    const res = await fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({action:'auth',password:pwd}) });
+    const data = await res.json();
+    if(data.ok){
+      token = data.token;
+      sessionStorage.setItem('admin_token', token);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      loadData();
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+    }
+  } catch { document.getElementById('login-err').textContent='Erreur réseau.'; document.getElementById('login-err').style.display='block'; }
+  btn.textContent = 'Se connecter';
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  const saved = sessionStorage.getItem('admin_token');
+  if(saved){ token=saved; document.getElementById('login-screen').style.display='none'; document.getElementById('app').style.display='flex'; loadData(); }
+});
+
+// ── LOAD ──
+async function loadData(){
+  try {
+    const res  = await fetch(SCRIPT_URL+'?action=get');
+    const data = await res.json();
+    if(data.error) throw new Error(data.error);
+    state.config  = data.config  || {};
+    state.blocs   = data.blocs   || [];
+    state.equipe  = data.equipe  || [];
+    state.projets = data.projets || [];
+    state.socials = data.socials || [];
+    // blocsPerso stocké dans config sous forme JSON
+    try { state.blocsPerso = JSON.parse(state.config.blocs_perso||'{}'); } catch{ state.blocsPerso={}; }
+    renderAll();
+  } catch(e){ toast('Erreur chargement : '+e.message,'err'); }
+}
+
+function renderAll(){
+  renderConfig(); renderBlocs(); renderBlocsPerso(); renderEquipe(); renderProjets(); renderSocials();
+}
+
+// ── CONFIG ──
+function renderConfig(){
+  const c=state.config;
+  sv('cfg-nom',c.nom||''); sv('cfg-role',c.role||''); sv('cfg-bio',c.bio||'');
+  sv('cfg-tags',c.tags||''); sv('cfg-avatar',c.avatar_url||'');
+  sv('cfg-discord-url',c.discord_url||''); sv('cfg-discord-tags',c.discord_tags||'');
+  sv('cfg-discord-titre',c.discord_titre||'');
+  sv('cfg-b10-label',c.bloc10_label||''); sv('cfg-b10-titre',c.bloc10_titre||'');
+  sv('cfg-b10-soustitre',c.bloc10_soustitre||''); sv('cfg-b10-url',c.bloc10_url||'');
+  sv('cfg-recrutement-url',c.recrutement_url||'');
+}
+function readConfig(){
+  return {
+    nom:gv('cfg-nom'), role:gv('cfg-role'), bio:gv('cfg-bio'), tags:gv('cfg-tags'),
+    avatar_url:gv('cfg-avatar'), discord_url:gv('cfg-discord-url'),
+    discord_tags:gv('cfg-discord-tags'), discord_titre:gv('cfg-discord-titre'),
+    bloc10_label:gv('cfg-b10-label'), bloc10_titre:gv('cfg-b10-titre'),
+    bloc10_soustitre:gv('cfg-b10-soustitre'), bloc10_url:gv('cfg-b10-url'),
+    recrutement_url:gv('cfg-recrutement-url'),
+    blocs_perso: JSON.stringify(readBlocsPersoData()),
+  };
+}
+
+// ── BLOCS VISIBILITÉ ──
+function renderBlocs(){
+  const grid=document.getElementById('blocs-grid'); grid.innerHTML='';
+  state.blocs.forEach(b=>{
+    const el=document.createElement('div'); el.className='bloc-toggle';
+    el.innerHTML=`<span class="bloc-toggle-name">${b.label}</span><label class="toggle"><input type="checkbox" ${b.visible==='true'||b.visible===true?'checked':''} data-id="${b.id}"><span class="toggle-slider"></span></label>`;
+    el.querySelector('input').addEventListener('change',setDirty);
+    grid.appendChild(el);
+  });
+}
+function readBlocs(){
+  return state.blocs.map(b=>({...b, visible:String(document.querySelector(`.bloc-toggle input[data-id="${b.id}"]`)?.checked??b.visible)}));
+}
+
+// ── BLOCS PERSONNALISABLES ──
+function renderBlocsPerso(){
+  const container=document.getElementById('blocs-perso-list'); container.innerHTML='';
+  BLOCS_DEF.forEach(def=>{
+    const perso=state.blocsPerso[def.id]||{type:'defaut',titre:'',soustitre:'',image_url:'',lien_url:'',iframe_code:'',pattern_texte:''};
+    const div=document.createElement('div'); div.className='bloc-perso'; div.dataset.id=def.id;
+
+    div.innerHTML=`
+      <div class="bloc-perso-header">
+        <div class="bloc-perso-name">
+          <span>${def.label}</span>
+          <span class="bloc-perso-badge">${perso.type||'défaut'}</span>
+        </div>
+        <i class="fas fa-chevron-down bloc-perso-chevron"></i>
+      </div>
+      <div class="bloc-perso-body">
+        <div class="field">
+          <label>Type de contenu</label>
+          <div class="type-btns">
+            <button class="type-btn ${(!perso.type||perso.type==='defaut')?'active':''}" data-type="defaut">Défaut</button>
+            <button class="type-btn ${perso.type==='texte'?'active':''}" data-type="texte">Texte</button>
+            <button class="type-btn ${perso.type==='image'?'active':''}" data-type="image">Image</button>
+            <button class="type-btn ${perso.type==='image_lien'?'active':''}" data-type="image_lien">Image + Lien</button>
+            <button class="type-btn ${perso.type==='image_texte'?'active':''}" data-type="image_texte">Image + Texte</button>
+            <button class="type-btn ${perso.type==='iframe'?'active':''}" data-type="iframe">Embed / iFrame</button>
+          </div>
+        </div>
+        <div class="perso-fields">
+          ${makePersoFields(def.id, perso)}
+        </div>
+      </div>`;
+
+    // Toggle accordéon
+    const header=div.querySelector('.bloc-perso-header');
+    const body=div.querySelector('.bloc-perso-body');
+    header.addEventListener('click',()=>{
+      header.classList.toggle('open');
+      body.classList.toggle('open');
+    });
+
+    // Type buttons
+    div.querySelectorAll('.type-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        div.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        div.querySelector('.bloc-perso-badge').textContent=btn.dataset.type;
+        div.querySelector('.perso-fields').innerHTML=makePersoFields(def.id, {...perso, type:btn.dataset.type});
+        setDirty();
+      });
+    });
+
+    container.appendChild(div);
+  });
+}
+
+function makePersoFields(id, perso){
+  const type=perso.type||'defaut';
+  if(type==='defaut') return `<p style="font-size:.78rem;color:var(--muted);">Ce bloc utilise son contenu par défaut. Choisis un autre type pour le personnaliser.</p>`;
+
+  let html='';
+  if(type==='texte'||type==='image_texte'){
+    html+=`<div class="field-row">
+      <div class="field"><label>Titre</label><input type="text" class="bp-titre" value="${esc(perso.titre||'')}" placeholder="Titre du bloc"></div>
+      <div class="field"><label>Sous-titre</label><input type="text" class="bp-soustitre" value="${esc(perso.soustitre||'')}" placeholder="Sous-titre"></div>
+    </div>`;
+  }
+  if(type==='image'||type==='image_lien'||type==='image_texte'){
+    html+=`<div class="field"><label>URL de l'image</label><input type="url" class="bp-image" value="${esc(perso.image_url||'')}" placeholder="https://...">`;
+    if(perso.image_url) html+=`<img src="${esc(perso.image_url)}" style="margin-top:6px;max-height:80px;border-radius:8px;object-fit:cover;">`;
+    html+=`</div>`;
+  }
+  if(type==='image_lien'||type==='image_texte'){
+    html+=`<div class="field"><label>Lien cliquable</label><input type="url" class="bp-lien" value="${esc(perso.lien_url||'')}" placeholder="https://..."></div>`;
+  }
+  if(type==='iframe'){
+    html+=`<div class="field"><label>Code embed (iframe, script, etc.)</label><textarea class="bp-iframe" placeholder="<iframe src=&quot;...&quot;></iframe>">${esc(perso.iframe_code||'')}</textarea></div>`;
+    html+=`<p style="font-size:.72rem;color:var(--muted);">Le code sera injecté dans le bloc. Assure-toi qu'il ne dépasse pas la hauteur du bloc.</p>`;
+  }
+  if(type==='texte'){
+    html+=`<div class="field"><label>Texte / description</label><textarea class="bp-desc" placeholder="Description ou texte libre...">${esc(perso.description||'')}</textarea></div>`;
+  }
+  return html || `<p style="font-size:.78rem;color:var(--muted);">Aucun champ pour ce type.</p>`;
+}
+
+function readBlocsPersoData(){
+  const result={};
+  document.querySelectorAll('.bloc-perso').forEach(div=>{
+    const id=div.dataset.id;
+    const activeBtn=div.querySelector('.type-btn.active');
+    const type=activeBtn?activeBtn.dataset.type:'defaut';
+    result[id]={
+      type,
+      titre:       div.querySelector('.bp-titre')?.value||'',
+      soustitre:   div.querySelector('.bp-soustitre')?.value||'',
+      image_url:   div.querySelector('.bp-image')?.value||'',
+      lien_url:    div.querySelector('.bp-lien')?.value||'',
+      iframe_code: div.querySelector('.bp-iframe')?.value||'',
+      description: div.querySelector('.bp-desc')?.value||'',
+    };
+  });
+  return result;
+}
+
+// ── ÉQUIPE ──
+function renderEquipe(){
+  const el=document.getElementById('equipe-list'); el.innerHTML='';
+  state.equipe.forEach((m,i)=>el.appendChild(makeMembreEl(m,i)));
+}
+function makeMembreEl(m,i){
+  const d=document.createElement('div'); d.className='list-item'; d.dataset.index=i;
+  d.innerHTML=`<div class="list-item-header"><span class="list-item-title">${m.nom||'Nouveau membre'}</span><button class="btn-del" data-del="${i}"><i class="fas fa-trash"></i></button></div>
+    <div class="field-row"><div class="field"><label>Nom</label><input type="text" class="m-nom" value="${esc(m.nom||'')}"></div><div class="field"><label>Rôle</label><input type="text" class="m-role" value="${esc(m.role||'')}"></div></div>
+    <div class="field-row"><div class="field"><label>URL photo</label><input type="url" class="m-avatar" value="${esc(m.avatar_url||'')}" placeholder="https://..."></div><div class="field"><label>Gradient CSS</label><input type="text" class="m-gradient" value="${esc(m.gradient||'linear-gradient(135deg,#5b5ef4,#9d5cf6)')}"></div></div>`;
+  d.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>{ d.querySelector('.list-item-title').textContent=d.querySelector('.m-nom').value||'Nouveau membre'; setDirty(); }));
+  d.querySelector('[data-del]').addEventListener('click',()=>{ state.equipe.splice(i,1); renderEquipe(); setDirty(); });
+  return d;
+}
+function readEquipe(){
+  return [...document.querySelectorAll('#equipe-list .list-item')].map(d=>({
+    nom:d.querySelector('.m-nom').value, role:d.querySelector('.m-role').value,
+    avatar_url:d.querySelector('.m-avatar').value, gradient:d.querySelector('.m-gradient').value,
+  }));
+}
+document.getElementById('btn-add-membre').addEventListener('click',()=>{ state.equipe.push({nom:'',role:'',avatar_url:'',gradient:'linear-gradient(135deg,#5b5ef4,#9d5cf6)'}); renderEquipe(); setDirty(); document.getElementById('equipe-list').lastElementChild?.querySelector('.m-nom')?.focus(); });
+
+// ── PROJETS ──
+function renderProjets(){
+  const el=document.getElementById('projets-list'); el.innerHTML='';
+  state.projets.forEach((p,i)=>el.appendChild(makeProjetEl(p,i)));
+}
+function makeProjetEl(p,i){
+  const d=document.createElement('div'); d.className='list-item'; d.dataset.index=i;
+  const cats=['parkour','webradio','outil','autre'];
+  const catOpts=cats.map(c=>`<option value="${c}" ${p.categorie===c?'selected':''}>${c}</option>`).join('');
+  d.innerHTML=`<div class="list-item-header"><span class="list-item-title">${esc(p.nom||'Nouveau projet')}</span><div class="list-item-actions"><label class="toggle"><input type="checkbox" class="p-visible" ${p.visible==='true'||p.visible===true?'checked':''}><span class="toggle-slider"></span></label><button class="btn-del"><i class="fas fa-trash"></i></button></div></div>
+    <div class="field-row"><div class="field"><label>Nom</label><input type="text" class="p-nom" value="${esc(p.nom||'')}"></div><div class="field"><label>URL</label><input type="url" class="p-url" value="${esc(p.url||'')}" placeholder="https://..."></div></div>
+    <div class="field"><label>Description</label><textarea class="p-desc">${esc(p.description||'')}</textarea></div>
+    <div class="field-row"><div class="field"><label>Tags (virgule)</label><input type="text" class="p-tags" value="${esc(p.tags||'')}"></div><div class="field"><label>Catégorie</label><select class="p-cat">${catOpts}</select></div></div>`;
+  d.querySelectorAll('input,textarea,select').forEach(inp=>inp.addEventListener('input',()=>{ d.querySelector('.list-item-title').textContent=d.querySelector('.p-nom').value||'Nouveau projet'; setDirty(); }));
+  d.querySelector('.btn-del').addEventListener('click',()=>{ state.projets.splice(i,1); renderProjets(); setDirty(); });
+  return d;
+}
+function readProjets(){
+  return [...document.querySelectorAll('#projets-list .list-item')].map((d,i)=>({
+    nom:d.querySelector('.p-nom').value, description:d.querySelector('.p-desc').value,
+    url:d.querySelector('.p-url').value, tags:d.querySelector('.p-tags').value,
+    categorie:d.querySelector('.p-cat').value, visible:String(d.querySelector('.p-visible').checked), ordre:String(i+1),
+  }));
+}
+document.getElementById('btn-add-projet').addEventListener('click',()=>{ state.projets.push({nom:'',description:'',url:'',tags:'',categorie:'outil',visible:'true',ordre:String(state.projets.length+1)}); renderProjets(); setDirty(); document.getElementById('projets-list').lastElementChild?.querySelector('.p-nom')?.focus(); });
+
+// ── SOCIALS ──
+function renderSocials(){
+  const el=document.getElementById('socials-list'); el.innerHTML='';
+  state.socials.forEach((s,i)=>el.appendChild(makeSocialEl(s,i)));
+}
+function makeSocialEl(s,i){
+  const d=document.createElement('div'); d.className='list-item';
+  d.innerHTML=`<div class="list-item-header"><span class="list-item-title">${esc(s.label||'Réseau')}</span><div class="list-item-actions"><label class="toggle"><input type="checkbox" class="s-visible" ${s.visible==='true'||s.visible===true?'checked':''}><span class="toggle-slider"></span></label><button class="btn-del"><i class="fas fa-trash"></i></button></div></div>
+    <div class="field-row3"><div class="field"><label>Label</label><input type="text" class="s-label" value="${esc(s.label||'')}"></div><div class="field"><label>Icône FontAwesome</label><input type="text" class="s-icon" value="${esc(s.icone||'')}" placeholder="fab fa-github"></div><div class="field"><label>URL</label><input type="url" class="s-url" value="${esc(s.url||'')}" placeholder="https://..."></div></div>`;
+  d.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',()=>{ d.querySelector('.list-item-title').textContent=d.querySelector('.s-label').value||'Réseau'; setDirty(); }));
+  d.querySelector('.btn-del').addEventListener('click',()=>{ state.socials.splice(i,1); renderSocials(); setDirty(); });
+  return d;
+}
+function readSocials(){
+  return [...document.querySelectorAll('#socials-list .list-item')].map((d,i)=>({
+    label:d.querySelector('.s-label').value, icone:d.querySelector('.s-icon').value,
+    url:d.querySelector('.s-url').value, visible:String(d.querySelector('.s-visible').checked), ordre:String(i+1),
+  }));
+}
+document.getElementById('btn-add-social').addEventListener('click',()=>{ state.socials.push({label:'',icone:'',url:'',visible:'true',ordre:String(state.socials.length+1)}); renderSocials(); setDirty(); document.getElementById('socials-list').lastElementChild?.querySelector('.s-label')?.focus(); });
+
+// ── NAV ──
+document.querySelectorAll('.nav-item[data-page]').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    item.classList.add('active');
+    document.getElementById('page-'+item.dataset.page).classList.add('active');
+    document.querySelector('.content').scrollTop=0;
+  });
+});
+
+// ── SAVE ──
+document.getElementById('btn-save-all').addEventListener('click', saveAll);
+async function saveAll(){
+  const btn=document.getElementById('btn-save-all');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch spin"></i> Sauvegarde...';
+  const payload={ config:readConfig(), blocs:readBlocs(), equipe:readEquipe(), projets:readProjets(), socials:readSocials() };
+  let ok=true;
+  for(const [sheet,data] of Object.entries(payload)){
+    try {
+      const res=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify({action:'save',sheet,payload:data})});
+      const j=await res.json();
+      if(!j.ok){ok=false;toast('Erreur sur '+sheet,'err');}
+    } catch{ ok=false; toast('Erreur réseau','err'); }
+  }
+  btn.disabled=false; btn.innerHTML='<i class="fas fa-save"></i> Sauvegarder';
+  if(ok){toast('Sauvegardé !','ok'); clearDirty();}
+}
+
+// ── DIRTY ──
+function setDirty(){ dirty=true; document.getElementById('save-bar').classList.add('visible'); }
+function clearDirty(){ dirty=false; document.getElementById('save-bar').classList.remove('visible'); }
+document.getElementById('app').addEventListener('input', setDirty);
+window.addEventListener('beforeunload', e=>{ if(dirty){e.preventDefault();e.returnValue='';} });
+
+// ── TOAST ──
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast'); const ico=t.querySelector('i');
+  document.getElementById('toast-msg').textContent=msg;
+  t.className='toast '+type+' show';
+  ico.className=type==='ok'?'fas fa-check-circle':'fas fa-times-circle';
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ── HELPERS ──
+function sv(id,v){const el=document.getElementById(id);if(el)el.value=v;}
+function gv(id){return document.getElementById(id)?.value||'';}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+</script>
+</body>
+</html>
