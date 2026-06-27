@@ -90,8 +90,23 @@
     .id-barcode{display:flex;gap:2px;align-items:flex-end;opacity:.3;margin-top:auto;}
     .bar{border-radius:1px;background:var(--acc);}
     .b2,.b3{padding:.9rem;justify-content:flex-start;gap:8px;}
-    .thumbs{display:grid;grid-template-columns:1fr 1fr;gap:5px;flex:1;}
-    .thumb{border-radius:7px;background:rgba(91,94,244,.12);border:1px solid rgba(91,94,244,.08);min-height:40px;}
+    /* proj list */
+    .proj-list{display:flex;flex-direction:column;gap:4px;flex:1;overflow:hidden;}
+    .proj-row{display:flex;align-items:center;gap:7px;padding:5px 7px;border-radius:7px;background:rgba(91,94,244,.07);border:1px solid rgba(91,94,244,.09);cursor:pointer;text-decoration:none;transition:background .18s,border-color .18s,transform .18s;opacity:0;transform:translateX(-6px);}
+    .proj-row.in{opacity:1;transform:translateX(0);transition:opacity .35s ease,transform .35s ease,background .18s,border-color .18s,transform .18s;}
+    .proj-row:hover{background:rgba(91,94,244,.16);border-color:rgba(91,94,244,.32);transform:translateX(3px);}
+    .proj-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+    .proj-row-name{font-size:10.5px;font-weight:600;color:#c7d2fe;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .proj-row-tag{font-size:9px;font-weight:600;padding:1px 5px;border-radius:4px;background:rgba(91,94,244,.12);color:#818cf8;flex-shrink:0;}
+    .proj-row-arrow{font-size:9px;color:#5b5ef4;opacity:0;transition:opacity .15s;flex-shrink:0;}
+    .proj-row:hover .proj-row-arrow{opacity:1;}
+    .proj-footer{display:flex;align-items:center;justify-content:space-between;padding:5px 0 0;border-top:1px solid rgba(91,94,244,.1);margin-top:2px;flex-shrink:0;}
+    .proj-voir{font-size:9.5px;font-weight:700;color:#5b5ef4;text-decoration:none;letter-spacing:.6px;text-transform:uppercase;display:flex;align-items:center;gap:3px;transition:gap .15s;}
+    .proj-voir:hover{gap:6px;}
+    .proj-activity{display:flex;align-items:flex-end;gap:2px;height:16px;}
+    .act-bar{width:3px;border-radius:2px;background:rgba(91,94,244,.35);}
+    @keyframes barPulse{0%,100%{transform:scaleY(.35)}50%{transform:scaleY(1)}}
+    .proj-count{font-size:9px;color:#475569;font-weight:500;}
     .b4{background:linear-gradient(160deg,#0f1729,#1a1040);align-items:center;justify-content:center;}
     .phone{width:78%;max-width:155px;background:#1c1c2e;border-radius:14px;border:1px solid rgba(255,255,255,.1);padding:9px 8px;}
     .ph-bar{height:5px;border-radius:3px;background:rgba(255,255,255,.07);margin-bottom:5px;}
@@ -176,8 +191,22 @@
     <div class="id-tags" id="id-tags"></div>
     <div class="id-barcode" id="barcode"></div>
   </div>
-  <div class="block b2" id="b2"><div class="block-label">Mes projets "tech"</div><div class="thumbs"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div></div>
-  <div class="block b3" id="b3"><div class="block-label">Mes projets "créa"</div><div class="thumbs"><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div><div class="thumb"></div></div></div>
+  <div class="block b2" id="b2">
+    <div class="block-label">Mes projets "tech"</div>
+    <div class="proj-list" id="proj-tech-list"></div>
+    <div class="proj-footer">
+      <div class="proj-activity" id="proj-tech-activity"></div>
+      <a class="proj-voir" href="programmes.html">Tous les projets <span>→</span></a>
+    </div>
+  </div>
+  <div class="block b3" id="b3">
+    <div class="block-label">Mes projets "créa"</div>
+    <div class="proj-list" id="proj-crea-list"></div>
+    <div class="proj-footer">
+      <div class="proj-activity" id="proj-crea-activity"></div>
+      <a class="proj-voir" href="programmes.html">Tous les projets <span>→</span></a>
+    </div>
+  </div>
   <div class="block b4" id="b4"><div class="phone"><div class="ph-bar"></div><div class="ph-row"><div class="ph-av"></div><div class="ph-lines"><div class="ph-line"></div><div class="ph-line s"></div></div></div><div class="ph-stats"><div><div class="ph-stat-n">0</div><div class="ph-stat-l">posts</div></div><div><div class="ph-stat-n">0</div><div class="ph-stat-l">abonnés</div></div><div><div class="ph-stat-n">0</div><div class="ph-stat-l">suivis</div></div></div><div class="ph-line" style="margin-top:4px;"></div><div class="ph-line s" style="margin-top:3px;"></div></div></div>
   <div class="block b5" id="b5"><div class="block-label">Retrouve-moi sur</div><div class="block-title">@nathabu</div><div class="net-card"><div class="net-top"><div class="net-av"></div><div><div class="net-name">Nathanaël</div><div class="net-handle">@nathabu</div></div></div><div class="net-line"></div><div class="net-line w70"></div></div></div>
   <div class="block b6" id="b6"><div class="pattern-txt">NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH<br>NATH&nbsp;NATH&nbsp;NATH</div></div>
@@ -268,52 +297,57 @@ document.querySelectorAll('.block').forEach(function(card){
   card.addEventListener('mouseleave',function(){card.style.backgroundImage='';});
 });
 
-// ══ LOAD DATA VIA JSONP ══
+// ══ LOAD DATA VIA FETCH ══
 function loadData(){
   Loader.set(35, 'Connexion au serveur');
 
-  window._cb = function(data){
+  function applyAll(data){
     Loader.set(75, 'Application des données');
     try {
       applyConfig(data.config||{});
       applyBlocs(data.blocs||[]);
       applyEquipe(data.equipe||[]);
       applySocials(data.socials||[]);
+      applyProjets(data.projets||[]);
+      applyBlocsPerso(data.config||{});
     } catch(e){ console.warn('Erreur apply:',e); }
 
-    // Attendre que les images soient chargées
     Loader.set(90, 'Chargement des images');
-    const imgs = [...document.images].filter(i=>!i.complete);
-    if(!imgs.length){
-      Loader.done(); return;
-    }
-    let loaded=0;
-    imgs.forEach(img=>{
-      const finish=()=>{ loaded++; if(loaded>=imgs.length) Loader.done(); };
+    var imgs = Array.from(document.images).filter(function(i){ return !i.complete; });
+    if(!imgs.length){ Loader.done(); return; }
+    var loaded = 0;
+    imgs.forEach(function(img){
+      var finish = function(){ loaded++; if(loaded >= imgs.length) Loader.done(); };
       img.addEventListener('load', finish);
       img.addEventListener('error', finish);
     });
-    // Fallback : max 2s d'attente images
-    setTimeout(()=>Loader.done(), 2000);
+    setTimeout(function(){ Loader.done(); }, 2000);
+  }
 
-    // Nettoyer
-    const old=document.getElementById('_jsonp_script');
-    if(old) old.remove();
-    delete window._cb;
-  };
-
-  const s=document.createElement('script');
-  s.id='_jsonp_script';
-  s.src=SCRIPT_URL+'?action=get&callback=_cb&t='+Date.now();
-  s.onerror=function(){
-    console.warn('JSONP échoué — affichage par défaut');
-    Loader.set(100,'Chargement par défaut');
-    Loader.done();
-    delete window._cb;
-  };
-  // Timeout de sécurité : si le script ne répond pas en 6s
-  setTimeout(()=>{ if(window._cb){ delete window._cb; Loader.done(); } }, 6000);
-  document.head.appendChild(s);
+  // Essai 1 : fetch direct
+  fetch(SCRIPT_URL + '?action=get')
+    .then(function(r){ return r.json(); })
+    .then(function(data){ applyAll(data); })
+    .catch(function(){
+      // Essai 2 : JSONP fallback
+      Loader.set(50, 'Tentative alternative...');
+      window._cb = function(data){
+        applyAll(data);
+        var old = document.getElementById('_jsonp_script');
+        if(old) old.remove();
+        delete window._cb;
+      };
+      var s = document.createElement('script');
+      s.id = '_jsonp_script';
+      s.src = SCRIPT_URL + '?action=get&callback=_cb&t=' + Date.now();
+      s.onerror = function(){
+        Loader.set(100, 'Chargement par défaut');
+        Loader.done();
+        delete window._cb;
+      };
+      setTimeout(function(){ if(window._cb){ delete window._cb; Loader.done(); } }, 6000);
+      document.head.appendChild(s);
+    });
 }
 
 // Attendre que les fonts soient chargées avant d'afficher
@@ -383,6 +417,172 @@ function applyEquipe(equipe){
     div.innerHTML=av+'<div><div class="mb-name">'+m.nom+'</div><div class="mb-role">'+m.role+'</div></div>';
     el.appendChild(div);
   });
+}
+
+function applyBlocsPerso(config) {
+  var raw = config.blocs_perso || '{}';
+  var perso = {};
+  try { perso = JSON.parse(raw); } catch(e) { return; }
+
+  Object.keys(perso).forEach(function(id) {
+    var p = perso[id];
+    var el = document.getElementById(id);
+    if (!el || !p || p.type === 'defaut' || !p.type) return;
+
+    // Vider le contenu existant sauf le block-label
+    var label = el.querySelector('.block-label');
+    var labelHtml = label ? label.outerHTML : '';
+    el.innerHTML = labelHtml;
+    el.style.padding = '.9rem';
+    el.style.flexDirection = 'column';
+    el.style.justifyContent = 'flex-start';
+    el.style.gap = '8px';
+
+    if (p.type === 'texte') {
+      if (p.titre) {
+        var t = document.createElement('div');
+        t.className = 'block-title';
+        t.textContent = p.titre;
+        el.appendChild(t);
+      }
+      if (p.soustitre) {
+        var s = document.createElement('div');
+        s.className = 'block-sub';
+        s.textContent = p.soustitre;
+        el.appendChild(s);
+      }
+      if (p.description) {
+        var d = document.createElement('div');
+        d.style.cssText = 'font-size:.75rem;color:#8892b0;line-height:1.6;margin-top:4px;';
+        d.textContent = p.description;
+        el.appendChild(d);
+      }
+    }
+
+    else if (p.type === 'image') {
+      var img = document.createElement('img');
+      img.src = p.image_url;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:inherit;';
+      el.style.position = 'relative';
+      el.appendChild(img);
+    }
+
+    else if (p.type === 'image_lien') {
+      var a = document.createElement('a');
+      a.href = p.lien_url || '#';
+      a.target = '_blank';
+      a.style.cssText = 'position:absolute;inset:0;z-index:2;';
+      var img = document.createElement('img');
+      img.src = p.image_url;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;inset:0;border-radius:inherit;';
+      el.style.position = 'relative';
+      el.appendChild(img);
+      el.appendChild(a);
+    }
+
+    else if (p.type === 'image_texte') {
+      if (p.image_url) {
+        var img = document.createElement('img');
+        img.src = p.image_url;
+        img.style.cssText = 'width:100%;height:60%;object-fit:cover;border-radius:10px;flex-shrink:0;';
+        el.appendChild(img);
+      }
+      if (p.titre) {
+        var t = document.createElement('div');
+        t.className = 'block-title';
+        t.textContent = p.titre;
+        el.appendChild(t);
+      }
+      if (p.soustitre) {
+        var s = document.createElement('div');
+        s.className = 'block-sub';
+        s.textContent = p.soustitre;
+        el.appendChild(s);
+      }
+      if (p.lien_url) {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', function() { window.open(p.lien_url, '_blank'); });
+      }
+    }
+
+    else if (p.type === 'iframe') {
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'flex:1;width:100%;overflow:hidden;border-radius:8px;';
+      wrap.innerHTML = p.iframe_code || '';
+      // Forcer les iframes à prendre 100% de la place
+      var iframes = wrap.querySelectorAll('iframe');
+      iframes.forEach(function(f) {
+        f.style.width = '100%';
+        f.style.height = '100%';
+        f.style.border = 'none';
+      });
+      el.appendChild(wrap);
+    }
+  });
+}
+
+function renderProjBloc(listId, actId, projets, categorie){
+  const list = document.getElementById(listId);
+  const actEl = document.getElementById(actId);
+  if(!list) return;
+  list.innerHTML = '';
+
+  // Couleurs par catégorie
+  const palettes = {
+    parkour:  ['#5b5ef4','#3b82f6','#06b6d4'],
+    webradio: ['#a855f7','#9d5cf6','#7c3aed'],
+    outil:    ['#06b6d4','#0ea5e9','#38bdf8'],
+    autre:    ['#818cf8','#6366f1','#4f46e5'],
+  };
+
+  const filtered = projets
+    .filter(p => p.visible === 'true' || p.visible === true)
+    .filter(p => !categorie || p.categorie === categorie)
+    .slice(0,4);
+
+  if(!filtered.length){
+    list.innerHTML = '<div style="font-size:10px;color:#475569;padding:8px 4px;">Aucun projet pour l\'instant.</div>';
+    return;
+  }
+
+  const colors = palettes[categorie] || palettes.autre;
+
+  filtered.forEach((p, i) => {
+    const row = document.createElement('a');
+    row.className = 'proj-row';
+    row.href = p.url && p.url !== '#' ? p.url : 'programmes.html';
+    if(p.url && p.url !== '#') row.target = '_blank';
+    const col = colors[i % colors.length];
+    const tags = (p.tags||'').split(',').map(t=>t.trim()).filter(Boolean);
+    const tag = tags[0] || '';
+    row.innerHTML =
+      '<div class="proj-dot" style="background:'+col+'"></div>'+
+      '<span class="proj-row-name">'+p.nom+'</span>'+
+      (tag ? '<span class="proj-row-tag">'+tag+'</span>' : '')+
+      '<span class="proj-row-arrow">→</span>';
+    list.appendChild(row);
+    // Animation décalée
+    setTimeout(()=>row.classList.add('in'), 80 + i*70);
+  });
+
+  // Barres d'activité
+  if(actEl){
+    actEl.innerHTML = '';
+    const hts = [7,12,9,16,11,14,8,13,10,15];
+    hts.slice(0, 8).forEach((h,i)=>{
+      const b = document.createElement('div');
+      b.className = 'act-bar';
+      b.style.height = h+'px';
+      b.style.animation = 'barPulse '+(0.7+Math.random()*0.7)+'s ease-in-out '+(i*0.09)+'s infinite';
+      actEl.appendChild(b);
+    });
+  }
+}
+
+function applyProjets(projets){
+  renderProjBloc('proj-tech-list','proj-tech-activity', projets, 'parkour');
+  // b3 = créa = webradio par défaut, tu peux changer la catégorie
+  renderProjBloc('proj-crea-list','proj-crea-activity', projets, 'webradio');
 }
 
 function applySocials(socials){
