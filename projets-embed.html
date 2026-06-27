@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:'Inter',sans-serif;
+      background:transparent;
+      color:#f1f2f9;
+      padding:.65rem;
+      overflow:hidden;
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+      gap:5px;
+    }
+
+    /* HEADER */
+    .header{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:2px;flex-shrink:0;
+    }
+    .header-label{
+      font-size:.6rem;font-weight:700;letter-spacing:1.5px;
+      text-transform:uppercase;color:#5b5ef4;
+    }
+    .header-link{
+      font-size:.6rem;font-weight:700;color:#5b5ef4;
+      text-decoration:none;letter-spacing:.5px;text-transform:uppercase;
+      display:flex;align-items:center;gap:3px;
+      transition:gap .15s;
+    }
+    .header-link:hover{gap:6px;}
+
+    /* LISTE */
+    .list{display:flex;flex-direction:column;gap:4px;flex:1;overflow:hidden;}
+
+    .row{
+      display:flex;align-items:center;gap:7px;
+      padding:5px 8px;border-radius:7px;
+      background:rgba(91,94,244,.08);
+      border:1px solid rgba(91,94,244,.1);
+      text-decoration:none;cursor:pointer;
+      opacity:0;transform:translateX(-8px);
+      transition:background .18s,border-color .2s,transform .18s;
+    }
+    .row.in{
+      opacity:1;transform:translateX(0);
+      transition:opacity .35s ease,transform .35s ease,background .18s,border-color .18s;
+    }
+    .row:hover{
+      background:rgba(91,94,244,.17);
+      border-color:rgba(91,94,244,.35);
+      transform:translateX(3px);
+    }
+    .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+    .name{
+      font-size:10.5px;font-weight:600;color:#c7d2fe;
+      flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .tag{
+      font-size:8.5px;font-weight:600;padding:1px 5px;border-radius:4px;
+      background:rgba(91,94,244,.13);color:#818cf8;flex-shrink:0;
+    }
+    .arrow{font-size:9px;color:#5b5ef4;opacity:0;transition:opacity .15s;flex-shrink:0;}
+    .row:hover .arrow{opacity:1;}
+
+    /* FOOTER */
+    .footer{
+      display:flex;align-items:flex-end;justify-content:space-between;
+      padding-top:5px;border-top:1px solid rgba(91,94,244,.1);
+      flex-shrink:0;
+    }
+    .activity{display:flex;align-items:flex-end;gap:2px;height:14px;}
+    .bar{width:3px;border-radius:2px;background:rgba(91,94,244,.38);}
+    .voir{
+      font-size:9px;font-weight:700;color:#5b5ef4;
+      text-decoration:none;letter-spacing:.6px;text-transform:uppercase;
+      display:flex;align-items:center;gap:3px;transition:gap .15s;
+    }
+    .voir:hover{gap:6px;}
+
+    @keyframes barPulse{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-label">Mes projets "tech"</span>
+</div>
+
+<div class="list" id="list"></div>
+
+<div class="footer">
+  <div class="activity" id="activity"></div>
+  <a class="voir" href="programmes.html" target="_parent">Voir tout <span>→</span></a>
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6aZ1_cwiijbbDE6WZR-Yq29LkAlQtNZ5mysjzPdVApxFVcYEASodSzLtQ4v4ltCnU/exec';
+
+const COLORS = ['#5b5ef4','#3b82f6','#a855f7','#06b6d4','#9d5cf6'];
+
+window._cbEmbed = function(data) {
+  const projets = (data.projets || [])
+    .filter(p => p.visible === 'true' || p.visible === true)
+    .slice(0, 5);
+
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+
+  if (!projets.length) {
+    list.innerHTML = '<div style="font-size:10px;color:#475569;padding:6px 2px;">Aucun projet.</div>';
+  } else {
+    projets.forEach((p, i) => {
+      const a = document.createElement('a');
+      a.className = 'row';
+      a.href = (p.url && p.url !== '#') ? p.url : '../programmes.html';
+      a.target = (p.url && p.url !== '#') ? '_blank' : '_parent';
+      const tags = (p.tags || '').split(',').map(t => t.trim()).filter(Boolean);
+      a.innerHTML =
+        '<div class="dot" style="background:' + COLORS[i % COLORS.length] + '"></div>' +
+        '<span class="name">' + p.nom + '</span>' +
+        (tags[0] ? '<span class="tag">' + tags[0] + '</span>' : '') +
+        '<span class="arrow">→</span>';
+      list.appendChild(a);
+      setTimeout(() => a.classList.add('in'), 60 + i * 65);
+    });
+  }
+
+  // Barres activité
+  const act = document.getElementById('activity');
+  [6,11,8,15,10,13,7,12].forEach((h, i) => {
+    const b = document.createElement('div');
+    b.className = 'bar';
+    b.style.height = h + 'px';
+    b.style.animation = 'barPulse ' + (0.65 + Math.random() * 0.7) + 's ease-in-out ' + (i * 0.08) + 's infinite';
+    act.appendChild(b);
+  });
+
+  const old = document.getElementById('_s');
+  if (old) old.remove();
+  delete window._cbEmbed;
+};
+
+const s = document.createElement('script');
+s.id = '_s';
+s.src = SCRIPT_URL + '?action=get&callback=_cbEmbed&t=' + Date.now();
+s.onerror = () => { document.getElementById('list').innerHTML = '<div style="font-size:10px;color:#ef4444;">Erreur de chargement.</div>'; };
+document.head.appendChild(s);
+</script>
+</body>
+</html>
