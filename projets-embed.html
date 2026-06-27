@@ -96,7 +96,7 @@
 
 <div class="footer">
   <div class="activity" id="activity"></div>
-  <a class="voir" href="programmes.html" target="_parent">Voir tout <span>→</span></a>
+  <a class="voir" href="https://nathbu92.github.io/site/programmes.html" target="_blank">Voir tout <span>→</span></a>
 </div>
 
 <script>
@@ -118,8 +118,8 @@ window._cbEmbed = function(data) {
     projets.forEach((p, i) => {
       const a = document.createElement('a');
       a.className = 'row';
-      a.href = (p.url && p.url !== '#') ? p.url : '../programmes.html';
-      a.target = (p.url && p.url !== '#') ? '_blank' : '_parent';
+      a.href = (p.url && p.url !== '#') ? p.url : 'https://nathbu92.github.io/site/programmes.html';
+      a.target = '_blank';
       const tags = (p.tags || '').split(',').map(t => t.trim()).filter(Boolean);
       a.innerHTML =
         '<div class="dot" style="background:' + COLORS[i % COLORS.length] + '"></div>' +

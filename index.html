@@ -431,6 +431,7 @@ function applyBlocsPerso(config) {
 
     // Vider le contenu existant sauf le block-label
     var label = el.querySelector('.block-label');
+    if(label && p.label) label.textContent = p.label;
     var labelHtml = label ? label.outerHTML : '';
     el.innerHTML = labelHtml;
     el.style.padding = '.9rem';
@@ -469,7 +470,9 @@ function applyBlocsPerso(config) {
 
     else if (p.type === 'image_lien') {
       var a = document.createElement('a');
-      a.href = p.lien_url || '#';
+      var lienUrl = p.lien_url || '#';
+      if(lienUrl && lienUrl !== '#' && !lienUrl.startsWith('http')) lienUrl = 'https://' + lienUrl;
+      a.href = lienUrl;
       a.target = '_blank';
       a.style.cssText = 'position:absolute;inset:0;z-index:2;';
       var img = document.createElement('img');
@@ -501,7 +504,9 @@ function applyBlocsPerso(config) {
       }
       if (p.lien_url) {
         el.style.cursor = 'pointer';
-        el.addEventListener('click', function() { window.open(p.lien_url, '_blank'); });
+        var href = p.lien_url;
+        if(href && !href.startsWith('http')) href = 'https://' + href;
+        el.addEventListener('click', function() { window.open(href, '_blank'); });
       }
     }
 
