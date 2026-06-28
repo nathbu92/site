@@ -159,6 +159,48 @@
     @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}.b7{grid-row:span 2;}.b9,.b10{grid-column:span 2;}}
     @media(max-width:560px){.grid{grid-template-columns:1fr;}.b1,.b7{grid-row:span 1;}.b9,.b10{grid-column:span 1;}nav ul{display:none;}}
   </style>
+  <!-- SERVICE WORKER -->
+  <script>
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('/site/sw.js', {scope:'/site/'})
+        .then(function(){
+          setInterval(function(){
+            if(navigator.serviceWorker.controller && window._dataVersion){
+              navigator.serviceWorker.controller.postMessage({
+                type:'CHECK_UPDATE', version:window._dataVersion
+              });
+            }
+          }, 5*60*1000);
+        })
+        .catch(function(e){ console.warn('[SW] erreur:',e); });
+
+      navigator.serviceWorker.addEventListener('message', function(ev){
+        if(!ev.data) return;
+        if(ev.data.type === 'DATA_UPDATED') showUpdateBanner(ev.data.data);
+        if(ev.data.type === 'DATA_VERSION') window._dataVersion = ev.data.version;
+      });
+    }
+
+    function showUpdateBanner(newData){
+      if(document.getElementById('update-banner')) return;
+      var banner = document.createElement('div');
+      banner.id = 'update-banner';
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2035;border:1px solid rgba(91,94,244,.45);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:9999;font-family:Inter,sans-serif;font-size:.82rem;color:#e8eaf6;';
+      var txt = document.createElement('span');
+      txt.textContent = 'Contenu mis a jour.';
+      var btnOk = document.createElement('button');
+      btnOk.textContent = 'Appliquer';
+      btnOk.style.cssText = 'padding:6px 14px;background:linear-gradient(135deg,#5b5ef4,#9d5cf6);border:none;border-radius:8px;color:#fff;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;';
+      btnOk.onclick = function(){ if(window._applyNewData) window._applyNewData(newData); banner.remove(); };
+      var btnX = document.createElement('button');
+      btnX.textContent = 'x';
+      btnX.style.cssText = 'background:none;border:none;color:#8892b0;font-size:16px;cursor:pointer;line-height:1;padding:0 2px;';
+      btnX.onclick = function(){ banner.remove(); };
+      wrap.appendChild(txt); wrap.appendChild(btnOk); wrap.appendChild(btnX);
+      banner.appendChild(wrap); document.body.appendChild(banner);
+    }
+  </script>
 </head>
 <body>
 
@@ -310,6 +352,15 @@ function loadData(){
       applySocials(data.socials||[]);
       applyProjets(data.projets||[]);
       applyBlocsPerso(data.config||{});
+      // Stocker version pour SW
+      (function(){
+        var s=JSON.stringify(data), h=0;
+        for(var i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}
+        window._dataVersion=String(h);
+        if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+          navigator.serviceWorker.controller.postMessage({type:'DATA_VERSION',version:window._dataVersion});
+        }
+      })();
     } catch(e){ console.warn('Erreur apply:',e); }
 
     Loader.set(90, 'Chargement des images');
@@ -354,6 +405,18 @@ function loadData(){
 if(document.fonts && document.fonts.ready){
   document.fonts.ready.then(()=>{
     Loader.set(25, 'Polices chargées');
+  // Exposer pour mise a jour sans rechargement
+  window._applyNewData = function(data){
+    try {
+      applyConfig(data.config||{});
+      applyBlocs(data.blocs||[]);
+      applyEquipe(data.equipe||[]);
+      applySocials(data.socials||[]);
+      applyProjets(data.projets||[]);
+      applyBlocsPerso(data.config||{});
+    } catch(e){ console.warn('_applyNewData error:', e); }
+  };
+
     loadData();
   });
 } else {
