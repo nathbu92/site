@@ -224,31 +224,121 @@
 </footer>
 
 <script>
-// Toggle grille/liste
-document.getElementById('btn-grid').addEventListener('click',()=>{
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6aZ1_cwiijbbDE6WZR-Yq29LkAlQtNZ5mysjzPdVApxFVcYEASodSzLtQ4v4ltCnU/exec';
+var COLORS = ['#5b5ef4','#9d5cf6','#06b6d4','#3b82f6','#a855f7'];
+var ICONS  = {parkour:'0x1F3C3',webradio:'0x1F4E1',outil:'0x1F527',autre:'0x1F4A1'};
+var allProjets = [];
+var currentFilter = 'all';
+
+function loadProjets(){
+  window._cbProg = function(data){
+    allProjets = (data.projets||[]).filter(function(p){
+      return p.visible==='true'||p.visible===true;
+    });
+    renderProjets();
+    var old=document.getElementById('_jsonp_prog');
+    if(old) old.remove();
+    delete window._cbProg;
+  };
+  var s=document.createElement('script');
+  s.id='_jsonp_prog';
+  s.src=SCRIPT_URL+'?action=get&callback=_cbProg&t='+Date.now();
+  s.onerror=function(){ delete window._cbProg; };
+  document.head.appendChild(s);
+}
+
+function renderProjets(){
+  var filtered = currentFilter==='all'
+    ? allProjets
+    : allProjets.filter(function(p){ return p.categorie===currentFilter; });
+  renderGrid(filtered);
+  renderList(filtered);
+}
+
+function renderGrid(projets){
+  var grid = document.getElementById('view-grid');
+  grid.innerHTML = '';
+  projets.forEach(function(p, i){
+    var tags = (p.tags||'').split(',').map(function(t){ return t.trim(); }).filter(Boolean);
+    var col  = COLORS[i % COLORS.length];
+    var col2 = COLORS[(i+1) % COLORS.length];
+    var icon = p.categorie==='parkour'?'&#127939;':p.categorie==='webradio'?'&#128225;':p.categorie==='outil'?'&#128295;':'&#128161;';
+    var card = document.createElement('a');
+    card.className = 'proj-card';
+    card.dataset.cat = p.categorie||'autre';
+    card.style.animationDelay = (i*0.05)+'s';
+    if(p.url && p.url !== '#'){ card.href=p.url; card.target='_blank'; }
+    else { card.href='#'; }
+    card.innerHTML =
+      '<div class="proj-icon" style="background:linear-gradient(135deg,'+col+','+col2+')">'+icon+'</div>'+
+      '<div class="proj-name">'+esc(p.nom)+'</div>'+
+      '<div class="proj-desc">'+esc(p.description||'')+'</div>'+
+      '<div class="proj-tags">'+tags.map(function(t){ return '<span class="ptag">'+esc(t)+'</span>'; }).join('')+'</div>'+
+      (p.url&&p.url!=='#'?'<div class="proj-link"><i class="fab fa-github"></i> Voir sur GitHub</div>':'');
+    grid.appendChild(card);
+  });
+  var ph=document.createElement('div');
+  ph.className='proj-card';
+  ph.style.cssText='border-style:dashed;opacity:.45;cursor:default;';
+  ph.innerHTML='<div class="proj-icon" style="background:rgba(91,94,244,.08)">+</div><div class="proj-name" style="color:#475569">Prochainement...</div><div class="proj-desc">D'autres projets arrivent.</div>';
+  grid.appendChild(ph);
+}
+
+function renderList(projets){
+  var list = document.getElementById('view-list');
+  list.innerHTML = '';
+  projets.forEach(function(p, i){
+    var icon = p.categorie==='parkour'?'&#127939;':p.categorie==='webradio'?'&#128225;':p.categorie==='outil'?'&#128295;':'&#128161;';
+    var col  = COLORS[i % COLORS.length];
+    var col2 = COLORS[(i+1) % COLORS.length];
+    var item = document.createElement('a');
+    item.className = 'proj-list-item';
+    if(p.url && p.url !== '#'){ item.href=p.url; item.target='_blank'; }
+    else { item.href='#'; }
+    item.innerHTML =
+      '<div class="proj-list-icon" style="background:linear-gradient(135deg,'+col+','+col2+')">'+icon+'</div>'+
+      '<div><div class="proj-list-name">'+esc(p.nom)+'</div><div class="proj-list-desc">'+esc(p.description||'')+'</div></div>'+
+      '<i class="fas fa-arrow-right proj-list-arrow"></i>';
+    list.appendChild(item);
+  });
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+document.querySelectorAll('.filter-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderProjets();
+  });
+});
+
+document.getElementById('btn-grid').addEventListener('click', function(){
   document.getElementById('view-grid').style.display='grid';
   document.getElementById('view-list').style.display='none';
   document.getElementById('btn-grid').classList.add('active');
   document.getElementById('btn-list').classList.remove('active');
 });
-document.getElementById('btn-list').addEventListener('click',()=>{
+document.getElementById('btn-list').addEventListener('click', function(){
   document.getElementById('view-grid').style.display='none';
   document.getElementById('view-list').style.display='flex';
   document.getElementById('btn-list').classList.add('active');
   document.getElementById('btn-grid').classList.remove('active');
 });
 
-// Filtres
-document.querySelectorAll('.filter-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const f=btn.dataset.filter;
-    document.querySelectorAll('.proj-card').forEach(c=>{
-      c.style.display=(f==='all'||c.dataset.cat===f)?'flex':'none';
-    });
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('message', function(ev){
+    if(ev.data && ev.data.type === 'DATA_UPDATED'){
+      allProjets = (ev.data.data.projets||[]).filter(function(p){
+        return p.visible==='true'||p.visible===true;
+      });
+      renderProjets();
+    }
   });
-});
+}
+
+loadProjets();
 </script>
 </body>
 </html>
