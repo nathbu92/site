@@ -569,7 +569,7 @@ function makeProjetEl(p,i){
   d.innerHTML=`<div class="list-item-header"><span class="list-item-title">${esc(p.nom||'Nouveau projet')}</span><div class="list-item-actions"><label class="toggle"><input type="checkbox" class="p-visible" ${p.visible==='true'||p.visible===true?'checked':''}><span class="toggle-slider"></span></label><button class="btn-del"><i class="fas fa-trash"></i></button></div></div>
     <div class="field-row"><div class="field"><label>Nom</label><input type="text" class="p-nom" value="${esc(p.nom||'')}"></div><div class="field"><label>URL</label><input type="url" class="p-url" value="${esc(p.url||'')}" placeholder="https://..."></div></div>
     <div class="field"><label>Description</label><textarea class="p-desc">${esc(p.description||'')}</textarea></div>
-    <div class="field-row"><div class="field"><label>Tags (virgule)</label><input type="text" class="p-tags" value="${esc(p.tags||'')}"></div><div class="field"><label>Catégorie</label><select class="p-cat">${catOpts}</select></div></div>`;
+    <div class="field-row"><div class="field"><label>Tags (virgule)</label><input type="text" class="p-tags" value="${esc(p.tags||'')}"></div><div class="field"><label>Catégorie (libre)</label><input type="text" class="p-cat" value="${esc(p.categorie||'outil')}" placeholder="parkour, webradio, outil..."></div></div>`;
   d.querySelectorAll('input,textarea,select').forEach(inp=>inp.addEventListener('input',()=>{ d.querySelector('.list-item-title').textContent=d.querySelector('.p-nom').value||'Nouveau projet'; setDirty(); }));
   d.querySelector('.btn-del').addEventListener('click',()=>{ state.projets.splice(i,1); renderProjets(); setDirty(); });
   return d;
@@ -578,7 +578,7 @@ function readProjets(){
   return [...document.querySelectorAll('#projets-list .list-item')].map((d,i)=>({
     nom:d.querySelector('.p-nom').value, description:d.querySelector('.p-desc').value,
     url:d.querySelector('.p-url').value, tags:d.querySelector('.p-tags').value,
-    categorie:d.querySelector('.p-cat').value, visible:String(d.querySelector('.p-visible').checked), ordre:String(i+1),
+    categorie:(d.querySelector('.p-cat').value||'outil').trim().toLowerCase(), visible:String(d.querySelector('.p-visible').checked), ordre:String(i+1),
   }));
 }
 document.getElementById('btn-add-projet').addEventListener('click',()=>{

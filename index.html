@@ -405,27 +405,91 @@ function loadData(){
     });
 }
 
-// Attendre que les fonts soient chargées avant d'afficher
-if(document.fonts && document.fonts.ready){
-  document.fonts.ready.then(()=>{
-    Loader.set(25, 'Polices chargées');
-  // Exposer pour mise a jour sans rechargement
-  window._applyNewData = function(data){
-    try {
+// Pas de loader si données en cache
+(function(){
+  try {
+    var cached = localStorage.getItem('nath_data');
+    var cachedVer = localStorage.getItem('nath_data_version');
+    if(cached){
+      var data = JSON.parse(cached);
       applyConfig(data.config||{});
       applyBlocs(data.blocs||[]);
       applyEquipe(data.equipe||[]);
       applySocials(data.socials||[]);
       applyProjets(data.projets||[]);
       applyBlocsPerso(data.config||{});
-    } catch(e){ console.warn('_applyNewData error:', e); }
-  };
-
+      window._dataVersion = cachedVer || '';
+      // Cacher loader instantanément
+      Loader.el.style.transition = 'none';
+      Loader.el.classList.add('hide');
+      document.querySelectorAll('.block').forEach(function(b){ b.classList.add('visible'); });
+      // Vérifier màj en arrière-plan après 2s
+      setTimeout(function(){ checkUpdateBackground(cachedVer); }, 2000);
+      return;
+    }
+  } catch(e){}
+  // Premier chargement => loader normal
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){
+      Loader.set(25, 'Polices chargées');
+      loadData();
+    });
+  } else {
     loadData();
-  });
-} else {
-  loadData();
+  }
+})();
+
+function checkUpdateBackground(oldVersion){
+  var s = document.createElement('script');
+  s.id = '_jsonp_check';
+  s.src = SCRIPT_URL + '?action=get&callback=_cbCheck&t=' + Date.now();
+  window._cbCheck = function(data){
+    var str = JSON.stringify(data), h = 0;
+    for(var i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; }
+    var newVer = String(h);
+    if(oldVersion && newVer !== oldVersion){
+      // Données changées => mettre en cache et proposer refresh
+      try {
+        localStorage.setItem('nath_data', JSON.stringify(data));
+        localStorage.setItem('nath_data_version', newVer);
+      } catch(e){}
+      window._dataVersion = newVer;
+      showUpdateBanner(data);
+    }
+    var old = document.getElementById('_jsonp_check');
+    if(old) old.remove();
+    delete window._cbCheck;
+  };
+  s.onerror = function(){ delete window._cbCheck; };
+  document.head.appendChild(s);
 }
+
+function showUpdateBanner(newData){
+  if(document.getElementById('update-banner')) return;
+  var banner = document.createElement('div');
+  banner.id = 'update-banner';
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2035;border:1px solid rgba(91,94,244,.45);border-radius:14px;padding:12px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:9999;font-family:Inter,sans-serif;font-size:.82rem;color:#e8eaf6;white-space:nowrap;';
+  var txt = document.createElement('span');
+  txt.textContent = 'Contenu mis a jour';
+  var btnOk = document.createElement('button');
+  btnOk.textContent = 'Appliquer';
+  btnOk.style.cssText = 'padding:6px 14px;background:linear-gradient(135deg,#5b5ef4,#9d5cf6);border:none;border-radius:8px;color:#fff;font-size:.78rem;font-weight:700;cursor:pointer;';
+  btnOk.onclick = function(){
+    if(window._applyNewData) window._applyNewData(newData);
+    banner.remove();
+  };
+  var btnX = document.createElement('button');
+  btnX.textContent = 'x';
+  btnX.style.cssText = 'background:none;border:none;color:#8892b0;font-size:16px;cursor:pointer;line-height:1;';
+  btnX.onclick = function(){ banner.remove(); };
+  wrap.appendChild(txt);
+  wrap.appendChild(btnOk);
+  wrap.appendChild(btnX);
+  banner.appendChild(wrap);
+  document.body.appendChild(banner);
+}
+
 
 // ══ APPLY FUNCTIONS ══
 function applyConfig(c){

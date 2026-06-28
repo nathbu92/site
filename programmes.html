@@ -132,11 +132,9 @@
   </div>
 
   <div class="toolbar">
-    <div class="filters">
+    <div class="filters" id="filters-container">
       <button class="filter-btn active" data-filter="all">Tous</button>
-      <button class="filter-btn" data-filter="parkour">Parkour</button>
-      <button class="filter-btn" data-filter="webradio">Webradio</button>
-      <button class="filter-btn" data-filter="outil">Outils</button>
+      <!-- Catégories injectées dynamiquement -->
     </div>
     <div class="view-toggle">
       <button class="vtbtn active" id="btn-grid" title="Vue grille"><i class="fas fa-th-large"></i></button>
@@ -247,7 +245,37 @@ function loadProjets(){
   document.head.appendChild(s);
 }
 
+function buildFilters(){
+  var cats = {};
+  allProjets.forEach(function(p){
+    var c = p.categorie||'autre';
+    cats[c] = (cats[c]||0) + 1;
+  });
+  var container = document.getElementById('filters-container');
+  // Garder le bouton "Tous"
+  container.innerHTML = '<button class="filter-btn active" data-filter="all">Tous ('+allProjets.length+')</button>';
+  Object.keys(cats).forEach(function(cat){
+    var btn = document.createElement('button');
+    btn.className = 'filter-btn';
+    btn.dataset.filter = cat;
+    // Capitalize
+    var label = cat.charAt(0).toUpperCase() + cat.slice(1);
+    btn.textContent = label + ' ('+cats[cat]+')';
+    container.appendChild(btn);
+  });
+  // Rebrancher les listeners
+  container.querySelectorAll('.filter-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      container.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderProjets();
+    });
+  });
+}
+
 function renderProjets(){
+  buildFilters();
   var filtered = currentFilter==='all'
     ? allProjets
     : allProjets.filter(function(p){ return p.categorie===currentFilter; });
