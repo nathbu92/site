@@ -352,13 +352,17 @@ function loadData(){
       applySocials(data.socials||[]);
       applyProjets(data.projets||[]);
       applyBlocsPerso(data.config||{});
-      // Stocker version pour SW
+      // Stocker version + diffuser données à toutes les pages via SW
       (function(){
         var s=JSON.stringify(data), h=0;
         for(var i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}
         window._dataVersion=String(h);
+        // Mettre les données en cache localStorage pour les autres pages
+        try { localStorage.setItem('nath_data', s); localStorage.setItem('nath_data_version', window._dataVersion); } catch(e){}
         if(navigator.serviceWorker&&navigator.serviceWorker.controller){
           navigator.serviceWorker.controller.postMessage({type:'DATA_VERSION',version:window._dataVersion});
+          // Diffuser à tous les clients (autres onglets/pages)
+          navigator.serviceWorker.controller.postMessage({type:'BROADCAST_DATA',data:data,version:window._dataVersion});
         }
       })();
     } catch(e){ console.warn('Erreur apply:',e); }

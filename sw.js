@@ -75,8 +75,23 @@ function staleWhileRevalidate(req){
   });
 }
 
-// MESSAGE check update
+// MESSAGE check update + broadcast
 self.addEventListener('message', function(e){
+  if(!e.data) return;
+
+  // Diffuser les données à tous les autres clients
+  if(e.data.type === 'BROADCAST_DATA'){
+    self.clients.matchAll({includeUncontrolled:true, type:'window'}).then(function(clients){
+      clients.forEach(function(client){
+        if(client.id !== e.source.id){
+          client.postMessage({type:'DATA_UPDATED', data:e.data.data, version:e.data.version});
+        }
+      });
+    });
+    return;
+  }
+
+  if(e.data.type !== 'CHECK_UPDATE') return;
   if(!e.data || e.data.type !== 'CHECK_UPDATE') return;
   var client = e.source;
   var oldVersion = e.data.version;
