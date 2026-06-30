@@ -176,29 +176,9 @@
 
       navigator.serviceWorker.addEventListener('message', function(ev){
         if(!ev.data) return;
-        if(ev.data.type === 'DATA_UPDATED') showUpdateBanner(ev.data.data);
+        if(ev.data.type === 'DATA_UPDATED' && window.showUpdateBanner) window.showUpdateBanner(ev.data.data);
         if(ev.data.type === 'DATA_VERSION') window._dataVersion = ev.data.version;
       });
-    }
-
-    function showUpdateBanner(newData){
-      if(document.getElementById('update-banner')) return;
-      var banner = document.createElement('div');
-      banner.id = 'update-banner';
-      var wrap = document.createElement('div');
-      wrap.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2035;border:1px solid rgba(91,94,244,.45);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:9999;font-family:Inter,sans-serif;font-size:.82rem;color:#e8eaf6;';
-      var txt = document.createElement('span');
-      txt.textContent = 'Contenu mis a jour.';
-      var btnOk = document.createElement('button');
-      btnOk.textContent = 'Appliquer';
-      btnOk.style.cssText = 'padding:6px 14px;background:linear-gradient(135deg,#5b5ef4,#9d5cf6);border:none;border-radius:8px;color:#fff;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;';
-      btnOk.onclick = function(){ if(window._applyNewData) window._applyNewData(newData); banner.remove(); };
-      var btnX = document.createElement('button');
-      btnX.textContent = 'x';
-      btnX.style.cssText = 'background:none;border:none;color:#8892b0;font-size:16px;cursor:pointer;line-height:1;padding:0 2px;';
-      btnX.onclick = function(){ banner.remove(); };
-      wrap.appendChild(txt); wrap.appendChild(btnOk); wrap.appendChild(btnX);
-      banner.appendChild(wrap); document.body.appendChild(banner);
     }
   </script>
 </head>
@@ -439,6 +419,18 @@ function loadData(){
   }
 })();
 
+// Fonction globale réutilisable pour appliquer de nouvelles données sans reload
+window._applyNewData = function(data){
+  try {
+    applyConfig(data.config||{});
+    applyBlocs(data.blocs||[]);
+    applyEquipe(data.equipe||[]);
+    applySocials(data.socials||[]);
+    applyProjets(data.projets||[]);
+    applyBlocsPerso(data.config||{});
+  } catch(e){ console.warn('_applyNewData error:', e); }
+};
+
 function checkUpdateBackground(oldVersion){
   var s = document.createElement('script');
   s.id = '_jsonp_check';
@@ -464,31 +456,44 @@ function checkUpdateBackground(oldVersion){
   document.head.appendChild(s);
 }
 
-function showUpdateBanner(newData){
+window.showUpdateBanner = function(newData){
   if(document.getElementById('update-banner')) return;
   var banner = document.createElement('div');
   banner.id = 'update-banner';
   var wrap = document.createElement('div');
-  wrap.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2035;border:1px solid rgba(91,94,244,.45);border-radius:14px;padding:12px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:9999;font-family:Inter,sans-serif;font-size:.82rem;color:#e8eaf6;white-space:nowrap;';
+  wrap.style.cssText = 'position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(0);opacity:0;background:rgba(17,21,40,.92);backdrop-filter:blur(10px);border:1px solid rgba(91,94,244,.3);border-radius:11px;padding:8px 8px 8px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.35);z-index:9999;font-family:Inter,sans-serif;font-size:.74rem;color:#c7d2fe;white-space:nowrap;transition:opacity .25s ease, transform .25s ease;';
   var txt = document.createElement('span');
   txt.textContent = 'Contenu mis a jour';
   var btnOk = document.createElement('button');
   btnOk.textContent = 'Appliquer';
-  btnOk.style.cssText = 'padding:6px 14px;background:linear-gradient(135deg,#5b5ef4,#9d5cf6);border:none;border-radius:8px;color:#fff;font-size:.78rem;font-weight:700;cursor:pointer;';
+  btnOk.style.cssText = 'padding:4px 11px;background:rgba(91,94,244,.18);border:1px solid rgba(91,94,244,.35);border-radius:7px;color:#a5b4fc;font-size:.72rem;font-weight:600;cursor:pointer;transition:background .15s;';
+  btnOk.onmouseenter = function(){ btnOk.style.background='rgba(91,94,244,.3)'; };
+  btnOk.onmouseleave = function(){ btnOk.style.background='rgba(91,94,244,.18)'; };
   btnOk.onclick = function(){
     if(window._applyNewData) window._applyNewData(newData);
-    banner.remove();
+    hideBanner();
   };
   var btnX = document.createElement('button');
   btnX.textContent = 'x';
-  btnX.style.cssText = 'background:none;border:none;color:#8892b0;font-size:16px;cursor:pointer;line-height:1;';
-  btnX.onclick = function(){ banner.remove(); };
+  btnX.style.cssText = 'background:none;border:none;color:#64748b;font-size:13px;cursor:pointer;line-height:1;padding:2px 4px;';
+  btnX.onclick = function(){ hideBanner(); };
+  function hideBanner(){
+    wrap.style.opacity='0';
+    wrap.style.transform='translateX(-50%) translateY(8px)';
+    setTimeout(function(){ banner.remove(); }, 250);
+  }
   wrap.appendChild(txt);
   wrap.appendChild(btnOk);
   wrap.appendChild(btnX);
   banner.appendChild(wrap);
   document.body.appendChild(banner);
-}
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      wrap.style.opacity='1';
+      wrap.style.transform='translateX(-50%) translateY(0)';
+    });
+  });
+};
 
 
 // ══ APPLY FUNCTIONS ══
