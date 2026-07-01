@@ -419,17 +419,6 @@ function loadData(){
   }
 })();
 
-// Fonction globale réutilisable pour appliquer de nouvelles données sans reload
-window._applyNewData = function(data){
-  try {
-    applyConfig(data.config||{});
-    applyBlocs(data.blocs||[]);
-    applyEquipe(data.equipe||[]);
-    applySocials(data.socials||[]);
-    applyProjets(data.projets||[]);
-    applyBlocsPerso(data.config||{});
-  } catch(e){ console.warn('_applyNewData error:', e); }
-};
 
 function checkUpdateBackground(oldVersion){
   var s = document.createElement('script');
@@ -737,6 +726,20 @@ function applySocials(socials){
       a.innerHTML='<i class="'+s.icone+'"></i>'; el.appendChild(a);
     });
 }
+
+// Exposer applyNewData apres toutes les fonctions
+// Fonction globale réutilisable pour appliquer de nouvelles données sans reload
+window._applyNewData = function(data){
+  try {
+    applyConfig(data.config||{});
+    applyBlocs(data.blocs||[]);
+    applyEquipe(data.equipe||[]);
+    applySocials(data.socials||[]);
+    applyProjets(data.projets||[]);
+    applyBlocsPerso(data.config||{});
+  } catch(e){ console.warn('_applyNewData error:', e); }
+};
+
 </script>
 </body>
 </html>
