@@ -558,10 +558,12 @@ function applyBlocsPerso(config) {
     var el = document.getElementById(id);
     if (!el || !p || p.type === 'defaut' || !p.type) return;
 
-    // Vider le contenu existant sauf le block-label
+    // Vider le contenu
     var label = el.querySelector('.block-label');
     if(label && p.label) label.textContent = p.label;
-    var labelHtml = label ? label.outerHTML : '';
+    // Image plein fond = pas de label
+    var showLabel = (p.type !== 'image' && p.type !== 'image_lien');
+    var labelHtml = (label && showLabel) ? label.outerHTML : '';
     el.innerHTML = labelHtml;
     el.style.padding = '.9rem';
     el.style.flexDirection = 'column';
