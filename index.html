@@ -450,12 +450,12 @@ window.showUpdateBanner = function(newData){
   var banner = document.createElement('div');
   banner.id = 'update-banner';
   var wrap = document.createElement('div');
-  wrap.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-60%);opacity:0;background:rgba(14,18,48,.97);backdrop-filter:blur(20px);border:1px solid rgba(91,94,244,.45);border-radius:18px;padding:28px 32px;display:flex;flex-direction:column;align-items:center;gap:16px;box-shadow:0 20px 60px rgba(0,0,0,.6);z-index:9999;font-family:Inter,sans-serif;min-width:320px;text-align:center;transition:opacity .3s ease, transform .3s ease;';
+  wrap.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-60%);opacity:0;background:rgba(14,18,48,.97);backdrop-filter:blur(20px);border:1px solid rgba(91,94,244,.35);border-radius:16px;padding:22px 28px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:0 16px 48px rgba(0,0,0,.55);z-index:9999;font-family:Inter,sans-serif;width:340px;max-width:90vw;text-align:center;transition:opacity .3s ease, transform .3s ease;';
   var txt = document.createElement('span');
   txt.innerHTML = '<span style="font-size:1.5rem;display:block;margin-bottom:4px;">&#128260;</span><span style="font-size:.95rem;font-weight:600;color:#e8eaf6;">Contenu mis à jour</span><span style="display:block;font-size:.75rem;color:#8892b0;margin-top:4px;">De nouvelles informations sont disponibles.</span>';
   var btnOk = document.createElement('button');
   btnOk.textContent = 'Appliquer';
-  btnOk.style.cssText = 'padding:10px 28px;background:linear-gradient(135deg,#5b5ef4,#9d5cf6);border:none;border-radius:10px;color:#fff;font-size:.85rem;font-weight:700;cursor:pointer;width:100%;transition:opacity .2s;';
+  btnOk.style.cssText = 'padding:9px 32px;background:linear-gradient(135deg,#5b5ef4,#9d5cf6);border:none;border-radius:10px;color:#fff;font-size:.82rem;font-weight:700;cursor:pointer;width:auto;transition:opacity .2s;';
   btnOk.onmouseenter = function(){ btnOk.style.opacity='.85'; };
   btnOk.onmouseleave = function(){ btnOk.style.opacity='1'; };
   btnOk.onclick = function(){
