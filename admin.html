@@ -298,6 +298,8 @@ const BLOCS_DEF = [
   { id:'b10', label:'À la une',        fixed:true,  desc:'Grand bloc du bas — modifiable dans "Identité"',
     preview:'<div style="font-size:7px;color:#818cf8;text-transform:uppercase;letter-spacing:1px">À la une</div><div style="font-size:8px;font-weight:700;margin-top:2px">Titre</div>' },
   { id:'b11', label:'Webradio',        fixed:false, desc:'Bloc Webradio Les Martinets',
+    preview:'<div style="display:flex;gap:3px"><div style="width:10px;height:10px;border-radius:3px;background:rgba(91,94,244,.2);display:flex;align-items:center;justify-content:center;font-size:6px">&#128225;</div></div>' },
+  { id:'b12', label:'Bloc perso 2',    fixed:false, desc:'Nouveau bloc personnalisable (colonne équipe)',
     preview:'<div style="display:flex;gap:3px"><div style="width:10px;height:10px;border-radius:3px;background:rgba(91,94,244,.2);display:flex;align-items:center;justify-content:center;font-size:6px">📡</div><div style="width:10px;height:10px;border-radius:3px;background:rgba(91,94,244,.2);display:flex;align-items:center;justify-content:center;font-size:6px">🎙</div></div>' },
 ];
 
@@ -450,6 +452,17 @@ function renderBlocsPerso(){
 }
 
 function renderPersoFields(container, perso){
+  // Champ nom du bloc (label affiché)
+  const nomBloc = mkField('Nom du bloc (label affiché)', 'bp-bloc-nom', 'text', perso.bloc_nom||'', 'ex: MES PROJETS TECH');
+  container.appendChild(nomBloc);
+  // Toggle afficher/masquer le label
+  const showLabelWrap = document.createElement('div');
+  showLabelWrap.className = 'field';
+  showLabelWrap.style.marginBottom = '.7rem';
+  showLabelWrap.innerHTML = '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><label class="toggle" style="flex-shrink:0"><input type="checkbox" class="bp-show-label" '+(perso.show_label==='false'||perso.show_label===false?'':'checked')+'><span class="toggle-slider"></span></label><span style="font-size:.75rem;color:var(--muted);">Afficher le label du bloc</span></label>';
+  showLabelWrap.querySelector('input').addEventListener('change', setDirty);
+  container.appendChild(showLabelWrap);
+  if(type==='defaut') return;
   const type=perso.type||'defaut';
   container.innerHTML='';
   if(type==='defaut'){
@@ -504,8 +517,10 @@ function mkField(label, cls, type, value, placeholder=''){
 function readOneBloc(card){
   const activeBtn=card.querySelector('.type-btn.active');
   return {
-    type:   activeBtn?activeBtn.dataset.type:'defaut',
-    label:  card.querySelector('.bp-label')?.value||'',
+    type:      activeBtn?activeBtn.dataset.type:'defaut',
+    bloc_nom:  card.querySelector('.bp-bloc-nom')?.value||'',
+    show_label:String(card.querySelector('.bp-show-label')?.checked!==false),
+    label:     card.querySelector('.bp-label')?.value||'',
     titre:  card.querySelector('.bp-titre')?.value||'',
     soustitre:card.querySelector('.bp-soustitre')?.value||'',
     image_url:card.querySelector('.bp-image')?.value||'',
