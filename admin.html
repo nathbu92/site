@@ -452,21 +452,26 @@ function renderBlocsPerso(){
 }
 
 function renderPersoFields(container, perso){
-  // Champ nom du bloc (label affiché)
+  container.innerHTML = '';
+  const type = perso.type||'defaut';
+
+  // Champ nom du bloc
   const nomBloc = mkField('Nom du bloc (label affiché)', 'bp-bloc-nom', 'text', perso.bloc_nom||'', 'ex: MES PROJETS TECH');
   container.appendChild(nomBloc);
-  // Toggle afficher/masquer le label
+
+  // Toggle show_label
   const showLabelWrap = document.createElement('div');
   showLabelWrap.className = 'field';
   showLabelWrap.style.marginBottom = '.7rem';
   showLabelWrap.innerHTML = '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><label class="toggle" style="flex-shrink:0"><input type="checkbox" class="bp-show-label" '+(perso.show_label==='false'||perso.show_label===false?'':'checked')+'><span class="toggle-slider"></span></label><span style="font-size:.75rem;color:var(--muted);">Afficher le label du bloc</span></label>';
   showLabelWrap.querySelector('input').addEventListener('change', setDirty);
   container.appendChild(showLabelWrap);
-  if(type==='defaut') return;
-  const type=perso.type||'defaut';
-  container.innerHTML='';
+
   if(type==='defaut'){
-    container.innerHTML='<p style="font-size:.75rem;color:#475569;padding:.5rem 0;">Contenu par défaut — aucune personnalisation.</p>';
+    const note = document.createElement('p');
+    note.style.cssText = 'font-size:.75rem;color:#475569;padding:.5rem 0;';
+    note.textContent = 'Contenu par défaut — aucune personnalisation.';
+    container.appendChild(note);
     return;
   }
   // Champ label toujours disponible
