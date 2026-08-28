@@ -10,7 +10,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    :root{--acc:#5b5ef4;--acc2:#9d5cf6;--card:#111827;--bg:#080b18;--text:#f1f2f9;--muted:#8892b0;--r:1.25rem;}
+    :root{
+      --acc:#5b5ef4;--acc2:#9d5cf6;
+      --card:#111827;--bg:#080b18;
+      --text:#f1f2f9;--muted:#8892b0;
+      --r:1.25rem;
+    }
+    /* Couleurs personnalisables via JS */
     body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
     /* ══ LOADER ══ */
@@ -250,7 +256,7 @@
     <button class="btn-team" id="btn-recrutement" style="display:none;">Rejoindre l'équipe</button>
   </div>
   <div class="block b8" id="b8"><div class="coin coin-a">N</div><div class="coin coin-b">?</div></div>
-  <a class="block b9" id="b9" href="#">
+  <a class="block b9" id="b9" href="discord.html">
     <div class="tag-row" id="discord-tags"></div>
     <div class="block-title" id="discord-titre">Rejoins la commu sur Discord !</div>
     <button class="btn-join">Rejoindre →</button>
@@ -272,7 +278,7 @@
 </footer>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6aZ1_cwiijbbDE6WZR-Yq29LkAlQtNZ5mysjzPdVApxFVcYEASodSzLtQ4v4ltCnU/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqgsV_tiBkYFHIABPk45tawHiDRj93aA5eGo3sOAoapN_8hiEqnrekAo7ug2gSi3HG/exec';
 
 // ══ LOADER MANAGER ══
 const Loader = {
@@ -503,7 +509,18 @@ window.showUpdateBanner = function(newData){
 
 
 // ══ APPLY FUNCTIONS ══
+function applyCouleurs(c){
+  if(!c) return;
+  var root = document.documentElement.style;
+  if(c.couleur_acc)   root.setProperty('--acc',  c.couleur_acc);
+  if(c.couleur_acc2)  root.setProperty('--acc2', c.couleur_acc2);
+  if(c.couleur_bg)    root.setProperty('--bg',   c.couleur_bg);
+  if(c.couleur_card)  root.setProperty('--card', c.couleur_card);
+  if(c.couleur_text)  root.setProperty('--text', c.couleur_text);
+}
+
 function applyConfig(c){
+  applyCouleurs(c);
   const nom=c.nom||'Nathanaël';
   document.getElementById('site-nom').textContent=nom;
   document.getElementById('id-name').textContent=nom.toUpperCase();

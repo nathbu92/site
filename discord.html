@@ -152,7 +152,7 @@
 </footer>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6aZ1_cwiijbbDE6WZR-Yq29LkAlQtNZ5mysjzPdVApxFVcYEASodSzLtQ4v4ltCnU/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqgsV_tiBkYFHIABPk45tawHiDRj93aA5eGo3sOAoapN_8hiEqnrekAo7ug2gSi3HG/exec';
 const DELAY = 3;
 
 let discordUrl = null;
@@ -214,7 +214,7 @@ window._cbDiscord = function(data){
   if(old) old.remove();
   delete window._cbDiscord;
 
-  if(!url || url === '#'){
+  if(!url || url === '#' || url.includes('discord.html') || url.includes('localhost')){
     setState('error');
     return;
   }

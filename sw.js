@@ -1,5 +1,5 @@
 const CACHE = 'nath-v2';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6aZ1_cwiijbbDE6WZR-Yq29LkAlQtNZ5mysjzPdVApxFVcYEASodSzLtQ4v4ltCnU/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqgsV_tiBkYFHIABPk45tawHiDRj93aA5eGo3sOAoapN_8hiEqnrekAo7ug2gSi3HG/exec';
 
 const PAGES = [
   '/site/index.html',

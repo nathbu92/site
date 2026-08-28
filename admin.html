@@ -218,6 +218,46 @@
         <div class="section-title">Recrutement</div>
         <div class="field"><label>Lien formulaire (vide = bouton masqué)</label><input type="url" id="cfg-recrutement-url" placeholder="https://..."></div>
       </div>
+      <div class="section-card">
+        <div class="section-title">Couleurs du site</div>
+        <div class="field-row">
+          <div class="field"><label>Couleur principale (accent)</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="color" id="cfg-couleur-acc" value="#5b5ef4" style="width:44px;height:36px;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:none;padding:2px;">
+              <input type="text" id="cfg-couleur-acc-hex" placeholder="#5b5ef4" style="flex:1;">
+            </div>
+          </div>
+          <div class="field"><label>Couleur secondaire (accent 2)</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="color" id="cfg-couleur-acc2" value="#9d5cf6" style="width:44px;height:36px;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:none;padding:2px;">
+              <input type="text" id="cfg-couleur-acc2-hex" placeholder="#9d5cf6" style="flex:1;">
+            </div>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Fond principal</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="color" id="cfg-couleur-bg" value="#080b18" style="width:44px;height:36px;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:none;padding:2px;">
+              <input type="text" id="cfg-couleur-bg-hex" placeholder="#080b18" style="flex:1;">
+            </div>
+          </div>
+          <div class="field"><label>Fond des cartes</label>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input type="color" id="cfg-couleur-card" value="#111827" style="width:44px;height:36px;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:none;padding:2px;">
+              <input type="text" id="cfg-couleur-card-hex" placeholder="#111827" style="flex:1;">
+            </div>
+          </div>
+        </div>
+        <div class="field"><label>Couleur du texte</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="color" id="cfg-couleur-text" value="#f1f2f9" style="width:44px;height:36px;border-radius:8px;border:1px solid var(--border);cursor:pointer;background:none;padding:2px;">
+            <input type="text" id="cfg-couleur-text-hex" placeholder="#f1f2f9" style="flex:1;">
+          </div>
+        </div>
+        <div style="margin-top:.5rem;">
+          <button class="btn-add" onclick="resetCouleurs()"><i class="fas fa-undo"></i> Remettre les couleurs par défaut</button>
+        </div>
+      </div>
     </div>
 
     <!-- VISIBILITÉ BLOCS -->
@@ -274,7 +314,7 @@
 <div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toast-msg"></span></div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw6aZ1_cwiijbbDE6WZR-Yq29LkAlQtNZ5mysjzPdVApxFVcYEASodSzLtQ4v4ltCnU/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwqgsV_tiBkYFHIABPk45tawHiDRj93aA5eGo3sOAoapN_8hiEqnrekAo7ug2gSi3HG/exec';
 const GH_BASE   = 'https://nathbu92.github.io/site/images/';
 
 // Définition des blocs avec aperçu visuel
@@ -370,6 +410,27 @@ function renderConfig(){
   sv('cfg-b10-label',c.bloc10_label||''); sv('cfg-b10-titre',c.bloc10_titre||'');
   sv('cfg-b10-soustitre',c.bloc10_soustitre||''); sv('cfg-b10-url',c.bloc10_url||'');
   sv('cfg-recrutement-url',c.recrutement_url||'');
+  // Couleurs
+  var couleurs = {
+    'cfg-couleur-acc':     c.couleur_acc     || '#5b5ef4',
+    'cfg-couleur-acc2':    c.couleur_acc2    || '#9d5cf6',
+    'cfg-couleur-bg':      c.couleur_bg      || '#080b18',
+    'cfg-couleur-card':    c.couleur_card    || '#111827',
+    'cfg-couleur-text':    c.couleur_text    || '#f1f2f9',
+  };
+  Object.entries(couleurs).forEach(function([id, val]){
+    var picker = document.getElementById(id);
+    var hex    = document.getElementById(id+'-hex');
+    if(picker) picker.value = val;
+    if(hex)    hex.value    = val;
+    // Sync picker <-> hex
+    if(picker && hex){
+      picker.addEventListener('input', function(){ hex.value = picker.value; setDirty(); });
+      hex.addEventListener('input', function(){
+        if(/^#[0-9a-fA-F]{6}$/.test(hex.value)){ picker.value = hex.value; setDirty(); }
+      });
+    }
+  });
 }
 function readConfig(){
   return {
@@ -379,6 +440,11 @@ function readConfig(){
     bloc10_label:gv('cfg-b10-label'), bloc10_titre:gv('cfg-b10-titre'),
     bloc10_soustitre:gv('cfg-b10-soustitre'), bloc10_url:gv('cfg-b10-url'),
     recrutement_url:gv('cfg-recrutement-url'),
+    couleur_acc:   document.getElementById('cfg-couleur-acc')?.value   || '',
+    couleur_acc2:  document.getElementById('cfg-couleur-acc2')?.value  || '',
+    couleur_bg:    document.getElementById('cfg-couleur-bg')?.value    || '',
+    couleur_card:  document.getElementById('cfg-couleur-card')?.value  || '',
+    couleur_text:  document.getElementById('cfg-couleur-text')?.value  || '',
     blocs_perso: JSON.stringify(readBlocsPersoData()),
   };
 }
@@ -668,6 +734,18 @@ document.getElementById('app').addEventListener('input', setDirty);
 window.addEventListener('beforeunload', e=>{ if(dirty){e.preventDefault();e.returnValue='';} });
 
 // ── TOAST ──
+function resetCouleurs(){
+  var defaults = {
+    'cfg-couleur-acc':'#5b5ef4','cfg-couleur-acc2':'#9d5cf6',
+    'cfg-couleur-bg':'#080b18','cfg-couleur-card':'#111827','cfg-couleur-text':'#f1f2f9'
+  };
+  Object.entries(defaults).forEach(function([id,val]){
+    var p=document.getElementById(id); var h=document.getElementById(id+'-hex');
+    if(p) p.value=val; if(h) h.value=val;
+  });
+  setDirty();
+}
+
 function toast(msg,type='ok'){
   const t=document.getElementById('toast'); const ico=t.querySelector('i');
   document.getElementById('toast-msg').textContent=msg;
